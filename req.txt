@@ -2,4 +2,3 @@ appdirs==1.4.4
 Jinja2==3.1.2
 PySide6==6.4.1
 SQLAlchemy==1.4.45
-weasyprint==57.1
