@@ -9,6 +9,7 @@ from PySide6.QtWidgets import QApplication
 app = QApplication([])
 
 dir_path = os.path.dirname(os.path.abspath(__file__))
+print(type(os.path.dirname(os.path.abspath(__file__))))
 env = Environment(loader=FileSystemLoader(dir_path))
 
 template_vars = {

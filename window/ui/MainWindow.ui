@@ -249,7 +249,13 @@
          <item>
           <widget class="QLineEdit" name="number_propusk">
            <property name="inputMask">
+            <string>##########</string>
+           </property>
+           <property name="text">
             <string/>
+           </property>
+           <property name="maxLength">
+            <number>10</number>
            </property>
           </widget>
          </item>

@@ -10,3 +10,4 @@ class Printer:
         dialog = QPrintDialog()
         if dialog.exec_() == QDialog.Accepted:
             self.editor.document().print_(dialog.printer())
+            

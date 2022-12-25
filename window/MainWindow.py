@@ -1,30 +1,41 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QMessageBox, QStackedWidget, QLabel)
-from PySide6.QtCore import Slot, Qt
-from PySide6.QtGui import QImage, QPixmap
+    QMainWindow, QMessageBox)
+from PySide6.QtCore import Slot, QDate
+from PySide6.QtGui import QImage, QRegularExpressionValidator
 
 from module.WorkWithDB import *
 from module.MessageBox import showDialog
 from module.WorkWithCam import WorkWithCam, load_image
-from time import sleep
-from datetime import datetime
+from module.TemplatePropusk import TemplatePropusk
+from module.Printer import Printer
+
 from .ui_py.ui_MainWindow import Ui_MainWindow
 from .ListPersonal import ListPersonal
 from .ListPlace import ListPlace
 from .SettingCam import SettingCam
 
+from time import sleep
+from datetime import datetime
+
 
 NO_MEDIA_IMAGE = "image/no_media_main.jpg"
 INDEX_PHOTO = 0
 INDEX_CAMERA = 1
+ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__package__))
+print(ABSOLUTE_PATH)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
-
         self.setupUi(self)
+
+        self.number_propusk.setValidator(QRegularExpressionValidator(
+            r"\d+", self
+        ))
+
+        self._set_default_data()
 
         self._init_menu_btn_action()
         self._init_push_btn_action()
@@ -178,7 +189,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.face_wwc._image_capture.captureToFile(self.face_file_name)
 
             self.stacked_widget_photo.setCurrentIndex(INDEX_PHOTO)
-            del_wwc(self.face_wwc, 5)
+            del_wwc(self.face_wwc, 1)
             load_image(self.imagePhoto, self.face_file_name)
 
     @Slot()
@@ -195,12 +206,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def _print(self) -> None:
-        self._save()
-        
+        if not hasattr(self, "data_propusk"):
+            self._save()
+
+        propusk_data = self.data_propusk.copy()
+
+        propusk_data["personal"] = self.personal_combobox.currentText()
+        propusk_data["place"] = self.place_combobox.currentIndex()
+
+        Printer(
+            str(TemplatePropusk(self.data_propusk,
+                                os.path.join(ABSOLUTE_PATH, 'docs')
+                                ))
+        ).print()
 
     @Slot()
     def _clear(self) -> None:
-        ...
+        if hasattr(self, "data_propusk"):
+            del self.data_propusk
+            
+        self._set_default_data()
 
     @Slot()
     def _save(self) -> None:
@@ -215,15 +240,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "place": self.place_combobox.currentData()['id'],
             "receiving_man": self.receiving_man.toPlainText(),
             "purpose_visite": self.purpose_visite.toPlainText(),
-            "face_photo": self.face_file_name,
-            "pasport_photo": self.pasport_file_name
+            "face_photo": F"file://{self.face_file_name}",
+            "pasport_photo": F"file://{self.pasport_file_name}"
         }
-        
-        print(self.data_propusk)
+
         with connect() as conn:
             conn.execute(
                 list_propusk.insert().values(**self.data_propusk)
             )
+
+    def _set_default_data(self):
+        self.number_propusk.clear()
+        self.date_from.setDate(QDate().currentDate())
+        self.date_to.setDate(QDate().currentDate())
+        self._init_photo()
+        self.receiving_man.clear()
+        self.purpose_visite.clear()
+        
+        if hasattr(self, "pasport_wwc"):
+            del_wwc(self.pasport_wwc)
+            self.stacked_widget_pasport.setCurrentIndex(INDEX_PHOTO)
+            
+        if hasattr(self, "face_wwc"):
+            del_wwc(self.face_wwc)
+            self.stacked_widget_photo.setCurrentIndex(INDEX_PHOTO)
 
 
 def del_wwc(wwc: WorkWithCam, second: int = 0) -> None:

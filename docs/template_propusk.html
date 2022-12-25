@@ -13,9 +13,9 @@
     <table >
         <tbody>
             <tr>
-                <td><b>Временный пропуск №:</b> {{ number_propusk }}</td>
+                <td><b>Временный пропуск №:</b> {{ id_propusk }}</td>
                 <td rowspan="5">
-                    <img id="img_face" src="{{ image_face }}" height="200" width="300"/>
+                    <img id="img_face" src="{{ face_photo }}" height="200" width="300"/>
                 </td>
             </tr>
             <tr>
@@ -26,7 +26,7 @@
                 <td><b>Действителен до:</b> {{ date_to }}</td>
             </tr>
             <tr>
-                <td><b>Выдал:</b> {{ personal_fio }}</td>
+                <td><b>Выдал:</b> {{ personal }}</td>
             </tr>
             <tr>
                 <td>
@@ -37,9 +37,9 @@
                 
             </tr>
             <tr>
-                <td><b>Место выдачи:</b>{{ place_name }}</td>
+                <td><b>Место выдачи:</b>{{ place }}</td>
                 <td rowspan="6">
-                    <img id="img_pasport" src="{{ image_pasport }}" height="200" width="300" />
+                    <img id="img_pasport" src="{{ pasport_photo }}" height="200" width="300" />
                 </td>
             </tr>
             <tr>
