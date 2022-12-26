@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QMessageBox)
+    QMainWindow, QMessageBox, QDialog)
 from PySide6.QtCore import Slot, QDate
 from PySide6.QtGui import QImage, QRegularExpressionValidator
 
@@ -28,12 +28,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        print("Hi main window")
+        
         self.number_propusk.setValidator(QRegularExpressionValidator(
             r"\d+", self
         ))
-
-        # self._set_default_data()
 
         self._init_menu_btn_action()
         self._init_push_btn_action()
@@ -85,13 +83,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_clear.clicked.connect(self._clear)
         self.btn_print.clicked.connect(self._print)
 
-    @Slot()
     def _show_personal_window(self) -> None:
-        ListPersonal(self).show()
-
+        ListPersonal(self).exec_()
+        self._update_list_combobox()
+        
     @Slot()
     def _show_place_window(self) -> None:
-        ListPlace(self).show()
+        ListPlace(self).exec_()
+        self._update_list_combobox()
 
     @Slot()
     def _show_setting_cam_window(self) -> None:

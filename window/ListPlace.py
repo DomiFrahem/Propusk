@@ -1,10 +1,10 @@
-from .ui_py.WindowListPlace import Ui_WindowListPlace
-from PySide6.QtWidgets import QMainWindow, QListWidgetItem
+from .ui_py.ui_DialogListPlace import Ui_DialogListPlace
+from PySide6.QtWidgets import QDialog, QListWidgetItem
 from PySide6.QtCore import Qt, Slot
 from module.WorkWithDB import connect, list_place
 
 
-class ListPlace(QMainWindow, Ui_WindowListPlace):
+class ListPlace(QDialog, Ui_DialogListPlace):
     def __init__(self, parent=None) -> None:
         super(ListPlace, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)

@@ -1,19 +1,18 @@
-from .ui_py.WindowListPersonal import Ui_WindowListPersonal
+from .ui_py.ui_DialogListPersonal import Ui_DialogListPersonal
 from module.WorkWithDB import connect, list_personal
 from module.MessageBox import showDialog
 
-# from module.Decoration import clean_and_update_data
-from PySide6.QtWidgets import QMainWindow, QListWidgetItem, QMessageBox
+from PySide6.QtWidgets import QDialog, QListWidgetItem, QMessageBox
 from PySide6.QtCore import Qt, Slot
 
 
 
-class ListPersonal(QMainWindow, Ui_WindowListPersonal):
-    def __init__(self, parent=None) -> None:
+class ListPersonal(QDialog, Ui_DialogListPersonal):
+    def __init__(self, update_listbox_func, parent=None) -> None:
         super(ListPersonal, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setupUi(self)
-
+        self.update_listbox_func = update_listbox_func
         self.btn_save_personal.clicked.connect(self._save)
         self.btn_update_personal.clicked.connect(self._update)
         self.btn_delete_personal.clicked.connect(self._delete)
@@ -116,3 +115,4 @@ class ListPersonal(QMainWindow, Ui_WindowListPersonal):
         item = QListWidgetItem(F"{lastname} {firstname} {middlename}")
         item.id = id
         return item
+    
