@@ -1,5 +1,13 @@
-.venv
+venv
 __pycache__
 ./test
-test*
+test
+test2.py
+test.html
 docx_example.py
+Propusk.spec
+build
+dist
+PySide6
+Propusk_linux/
+Propusk_Linux*

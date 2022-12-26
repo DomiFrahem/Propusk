@@ -22,20 +22,18 @@ NO_MEDIA_IMAGE = "image/no_media_main.jpg"
 INDEX_PHOTO = 0
 INDEX_CAMERA = 1
 ABSOLUTE_PATH = os.path.dirname(os.path.abspath(__package__))
-print(ABSOLUTE_PATH)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-
     def __init__(self, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-
+        print("Hi main window")
         self.number_propusk.setValidator(QRegularExpressionValidator(
             r"\d+", self
         ))
 
-        self._set_default_data()
+        # self._set_default_data()
 
         self._init_menu_btn_action()
         self._init_push_btn_action()
@@ -257,11 +255,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.receiving_man.clear()
         self.purpose_visite.clear()
         
-        if hasattr(self, "pasport_wwc"):
+        if hasattr(self, "pasport_wwc", 1):
             del_wwc(self.pasport_wwc)
             self.stacked_widget_pasport.setCurrentIndex(INDEX_PHOTO)
             
-        if hasattr(self, "face_wwc"):
+        if hasattr(self, "face_wwc", 1):
             del_wwc(self.face_wwc)
             self.stacked_widget_photo.setCurrentIndex(INDEX_PHOTO)
 

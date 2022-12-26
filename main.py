@@ -5,7 +5,7 @@ import sys
 
 def main():
     init_db()
-    
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
