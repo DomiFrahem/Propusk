@@ -1,0 +1,13 @@
+.venv
+__pycache__
+./test
+test
+test2.py
+test.html
+docx_example.py
+Propusk.spec
+dist
+PySide6
+Propusk_linux/
+.vscode
+build

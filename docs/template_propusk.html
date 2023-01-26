@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="padding: 0; margin: 0; font-size: 12pt">
+    {% for _ in range(2) %}
+    <table>
+        <tbody>
+            <tr>
+                <td><b>Временный пропуск №:</b> {{ id_propusk }}</td>
+                <td rowspan="12">
+                    <img src="{{ face_photo }}" width="200" height="300"/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Дата выдачи:</b> {{ date_from }}</td>
+                
+            </tr>
+            <tr>
+                <td><b>Действителен до:</b> {{ date_to }}</td>
+            </tr>
+            <tr>
+                <td><b>Выдал:</b> {{ personal }}</td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="font-size: 12pt;">__________________________________</p>
+                    <p style="font-size: 10pt !important;">&nbsp;&nbsp;Подпись сотрудника бюро пропусков</p>
+                    <p style="font-size: 10pt !important;">&nbsp;&nbsp;Печать</p>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Место выдачи:</b> {{ place }}</td>
+            </tr>
+            <tr>
+                <td><b>Принимающий:</b></td>
+            </tr>
+            <tr>
+                <td>{{ receiving_man }}</td>
+            </tr>
+            <tr>
+                <td><b>Цель визита:</b></td>
+            </tr>
+            <tr> 
+                <td>{{ purpose_visite }}</td></tr>
+            <tr>
+                <td><b>Время выхода: __________________</b></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    {% endfor %}
+</body>
+
+</html>

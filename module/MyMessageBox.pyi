@@ -1,0 +1,3 @@
+from PySide6.QtWidgets import QMessageBox
+    
+def show_dialog(state: QMessageBox.Icon, title: str, massage: str): ...
