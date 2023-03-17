@@ -8,7 +8,6 @@ from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.ImageTool import rotate_image
-# from module.ModelPropusk import *
 
 
 from .ui_py.ui_MainWindow import Ui_MainWindow
@@ -21,6 +20,9 @@ from .DialogHistory import DialogHistory
 
 from time import sleep
 from datetime import datetime
+from logger import logger
+from pathlib import Path
+import platform
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -74,6 +76,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _check_setting_cam(self) -> None:
         if not self._get_selected_cam():
+            logger.warning(warring_cams.get("title"))
             show_dialog(
                 QMessageBox.Warning,
                 warring_cams.get("title"),
@@ -153,24 +156,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _start_cam_photo(self) -> None:
         if self._get_selected_cam():
             if self.stacked_widget_photo.currentIndex() == int(os.environ.get('INDEX_PHOTO')):
-                self.stacked_widget_photo.setCurrentIndex(int(os.environ.get('INDEX_CAMERA')))
-                self.face_wwc = WorkWithCam(
-                    q_Video_Widget=self.face_video_widget,
-                    name_cam=self._get_selected_cam()
-                )
+                self.stacked_widget_photo.setCurrentIndex(
+                    int(os.environ.get('INDEX_CAMERA')))
+                self._create_wwc()
 
                 self.face_wwc.start_cam()
             else:
-                self._del_wwc("face_wwc", 1)
-                self.stacked_widget_photo.setCurrentIndex(int(os.environ.get('INDEX_PHOTO')))
+                self.face_wwc.stop_cam()
+                self.stacked_widget_photo.setCurrentIndex(
+                    int(os.environ.get('INDEX_PHOTO')))
+
+    def _create_wwc(self) -> None:
+        if not hasattr(self, "face_wwc"):
+            self.face_wwc = WorkWithCam(
+                q_Video_Widget=self.face_video_widget,
+                name_cam=self._get_selected_cam())
 
     @Slot()
-    def _take_image_face(self):
+    def _take_image_face(self) -> None:
         if hasattr(self, "face_wwc"):
-            self.face_file_name = self.face_wwc.cupture_image()
-            self.stacked_widget_photo.setCurrentIndex(int(os.environ.get('INDEX_PHOTO')))
-            self._del_wwc("face_wwc", 1)
-            load_image(self.imagePhoto, self.face_file_name)
+            self.face_file_name = self.face_wwc.cupture_image(self.imagePhoto)
+
+            sleep(1)
+            self.stacked_widget_photo.setCurrentIndex(
+                int(os.environ.get('INDEX_PHOTO')))
+            self.face_wwc.stop_cam()
 
     @Slot()
     def _print(self) -> None:
@@ -186,15 +196,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'dd.MM.yyyy hh:mm')
 
         rotate_img = rotate_image(self.face_file_name, -90)
-        propusk_data["face_photo"] = F"file://{rotate_img}"
+        
+        if platform.system() in 'Linux':
+            rotate_img = F"file://{rotate_img}"
 
-        render_text = str(TemplatePropusk(propusk_data,
-                                          os.path.join(os.environ.get('ABSOLUTE_PATH'), 'docs')
-                                          ))
+        propusk_data["face_photo"] = rotate_img
 
-        Printer(
-            render_text
-        ).print()
+        render_text = TemplatePropusk(
+            propusk_data,
+            os.path.join(os.environ.get('ABSOLUTE_PATH'), 'docs')
+        )
+
+        Printer(str(render_text)).print()
 
     @Slot()
     def _clear(self) -> None:
@@ -216,8 +229,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "place": self.place_combobox.currentData()['id'],
             "receiving_man": self.receiving_man.toPlainText(),
             "purpose_visite": self.purpose_visite.toPlainText(),
-            "face_photo": F"file://{self.face_file_name}",
-            "pasport_photo": F"file://{self.face_file_name}"
+            "face_photo": F"{Path(self.face_file_name).name}",
+            "pasport_photo": F"{Path(self.face_file_name).name}"
         }
 
         with connect() as conn:
@@ -225,18 +238,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 list_propusk.insert().values(**self.data_propusk)
             )
 
-    def _set_default_data(self):
+    def _set_default_data(self) -> None:
         self.number_propusk.clear()
         self.date_from.setDate(QDate().currentDate())
         self.date_to.setDate(QDate().currentDate())
         self._init_photo()
         self.receiving_man.clear()
         self.purpose_visite.clear()
-
+        self.stacked_widget_photo.setCurrentIndex(
+            int(os.environ.get('INDEX_PHOTO')))
         if hasattr(self, "face_wwc"):
-            self._del_wwc("face_wwc", 1)
-            self.stacked_widget_photo.setCurrentIndex(int(os.environ.get('INDEX_PHOTO')))
-
-    def _del_wwc(self, attr, second: int = 0) -> None:
-        sleep(second)
-        delattr(self, attr)
+            delattr(self, "face_wwc")

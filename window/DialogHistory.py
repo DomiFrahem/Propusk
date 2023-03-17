@@ -7,7 +7,7 @@ from module.ModelPropusk import PropuskDataMethods
 from module.TemplatePropusk import TemplatePropusk
 import os
 from module.ImageTool import rotate_image
-# from PySide6.QtGui import QStandardItemModel
+from logger import logger
 
 
 class DialogHistory(Ui_DialogHistory, QDialog):
@@ -29,8 +29,11 @@ class DialogHistory(Ui_DialogHistory, QDialog):
         try:
             id_propusk = self.list_propusk.selectedItems()[0].text()
             self.load_page(int(id_propusk))
-        except IndexError:
+        except IndexError as err:
+            logger.debug(err)
             self.browser.clear()
+        except OSError as err:
+            logger.debug(err)
 
     @Slot(str)
     def filter_items(self, text: str) -> None:
@@ -75,13 +78,12 @@ class DialogHistory(Ui_DialogHistory, QDialog):
             ).fetchone()
 
             pdm = PropuskDataMethods(*row)
-            pdm.set_value("face_photo",
-                          rotate_image(pdm.get_value("face_photo"))
-                          )
+            path_photo = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("face_photo"))
+            pdm.set_value("face_photo", rotate_image(path_photo))
             
             render_text = str(TemplatePropusk(pdm._propusk_data.__dict__,
                                               os.path.join(os.path.dirname(
                                                   os.path.abspath(__package__)), 'docs')
                                               ))
-
+            logger.info(render_text)
             self.browser.setText(render_text)

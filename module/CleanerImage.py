@@ -2,7 +2,7 @@ from .WorkWithDB import connect, list_propusk
 from sqlalchemy import select
 from appdirs import user_data_dir
 import os
-
+from logger import logger
 
 class CleanerImage:
     def __init__(self, path: str):
@@ -10,7 +10,9 @@ class CleanerImage:
         
         if os.path.exists(path):    
             self._files_in_db = self._get_list_files_from_db()
+            logger.info(self._files_in_db)
         else:
+            logger.error(F"Не корректный путь: {path}")
             raise ValueError(F"Не корректный путь: {path}")
 
     def _get_list_files_from_db(self) -> list:
@@ -19,6 +21,7 @@ class CleanerImage:
                 list_propusk.c.face_photo,
                 list_propusk.c.pasport_photo
             ).select_from(list_propusk)
+            
             return sum([[self._only_file(x[0]), self._only_file(x[0])]
                         for x in conn.execute(list_files).all()], [])
 
@@ -33,5 +36,5 @@ class CleanerImage:
         for file in files:
             if file not in self._files_in_db:
                 os.remove(os.path.join(self._path, file))
-                print(F"Удален файл: {os.path.join(self._path, file)}")
+                logger.info(F"Удален файл: {os.path.join(self._path, file)}")
 

@@ -24,15 +24,15 @@ class DialogCustomVariables(Ui_DialogCustomVariables, QDialog):
         )
 
     def _show_path_photo(self) -> None:
-        dir = str(QFileDialog.getExistingDirectory(None, "Selected Directory"))
+        dir = str(QFileDialog.getExistingDirectory(None, "Выбрать директорию где будут храниться фоотографии"))
         self.path_photo.setText(dir)
 
     def _show_path_database(self) -> None:
-        dir = str(QFileDialog.getExistingDirectory(None, "Selected Directory"))
+        dir = str(QFileDialog.getExistingDirectory(None, "Выбрать директорию где будет храниться база данных"))
         self.path_db.setText(dir)
 
     def _save(self) -> None:
-        with open(self.path_env, 'w+') as file:
+        with open(self.path_env, 'w+', encoding="utf-8") as file:
             file.write(F"DB_DIR={self.path_db.text()} \n")
             file.write(F"PHOTO_DIR={self.path_photo.text()} \n")
 

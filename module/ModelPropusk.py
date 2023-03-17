@@ -1,14 +1,14 @@
 from datetime import datetime
 from dataclasses import dataclass
+from logger import logger
 
 
 def key_error(func):
-
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except KeyError:
-            print("Ключ не правильный")
+            logger.info("ModelPropusk -> Ключ не правильный")
 
     return wrapper
 

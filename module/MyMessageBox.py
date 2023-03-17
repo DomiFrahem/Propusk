@@ -1,4 +1,5 @@
 from PySide6.QtWidgets import QMessageBox
+from logger import logger
 
 def show_dialog(state: QMessageBox.Icon, title: str, massage: str):
    msgBox = QMessageBox()
@@ -10,4 +11,4 @@ def show_dialog(state: QMessageBox.Icon, title: str, massage: str):
 
    returnValue = msgBox.exec()
    if returnValue == QMessageBox.Ok:
-      print('OK clicked')
+      logger.info('MyMessageBox press ok')

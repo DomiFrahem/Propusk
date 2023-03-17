@@ -4,6 +4,7 @@ from sqlalchemy import (MetaData, Table, Column, Integer,
 import os
 from module.MyMessageBox import show_dialog
 from PySide6.QtWidgets import QMessageBox
+from logger import logger
 
 meta = MetaData()
 
@@ -14,14 +15,12 @@ else:
     if os.environ.get("DEFAULT_PATH"):
         FILE_NAME = os.path.join(os.environ.get("DEFAULT_PATH"), "propusk.db")
     else:
+        logger.error("Не правильно указан путь к базе данных, или вообще отсутствует")
         show_dialog(
             QMessageBox.Icon.Critical,
             "Путь к бд",
             "Не правильно указан путь к базе данных, или вообще отсутствует"
         )
-        raise ValueError(F"Не правильно указан путь к базе данных, или вообще отсутствует")
-    
-print("q", FILE_NAME)
     
 cam_setting = Table("сam_setting", meta,
                     Column('id', Integer, primary_key=True),
@@ -64,11 +63,10 @@ list_propusk = Table("list_propusk", meta,
                             onupdate=func.current_timestamp()))
 
 
-engine = create_engine(F"sqlite:///{FILE_NAME}", echo=True)
-
+engine = create_engine(F"sqlite:///{FILE_NAME}", echo=False)
+engine.logging_name = 'PropuskLogger'
 
 def init_db():
-    print(FILE_NAME)
     if not os.path.exists(os.path.dirname(FILE_NAME)):
         os.mkdir(os.path.dirname(FILE_NAME))
 

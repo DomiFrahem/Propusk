@@ -31,8 +31,8 @@ class ListPersonal(QDialog, Ui_DialogListPersonal):
             with connect() as conn:
                 insert_personal = list_personal.insert().values(
                  lastname=self.lastname.text(),
-                firstname=self.firstname.text(),
-                middlename=self.middlename.text()
+                 firstname=self.firstname.text(),
+                 middlename=self.middlename.text()
                 )
                 conn.execute(insert_personal)
 

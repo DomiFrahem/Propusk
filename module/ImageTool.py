@@ -1,5 +1,6 @@
 from PIL import Image, UnidentifiedImageError
 import os
+from logger import logger
 
 def rotate_image(path_file: str, gradus: int = -90) -> str:
     try:
@@ -13,10 +14,11 @@ def rotate_image(path_file: str, gradus: int = -90) -> str:
         rotate_img.save(rotate_path_image)
     
         return rotate_path_image
+    
     except FileNotFoundError:
-        print(F"Файл не найден: {path_file=}")
+        logger.error(F"Файл не найден: {path_file=}")
         return None
     except UnidentifiedImageError:
-        print(F"Не правильный формат: {path_file=}")
+        logger.error(F"Не правильный формат: {path_file=}")
         return None
 

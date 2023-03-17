@@ -7,13 +7,12 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QLabel
 from PySide6.QtMultimedia import (
     QMediaDevices, QCamera, QImageCapture, QMediaCaptureSession)
-from appdirs import user_data_dir
 from datetime import datetime
 from itertools import groupby
+from logger import logger
 
-if os.environ.get("PHOTO_DIR"):
-    IMAGES_PATH = os.environ.get("PHOTO_DIR")
-else:
+if not os.environ.get("PHOTO_DIR"):
+    logger.error("Не задана локальная переменная PHOTO_DIR")
     raise ValueError(
         "не задана локальная переменная PHOTO_DIR"
     )
@@ -31,29 +30,29 @@ class WorkWithCam:
 
         self._camera_info = get_object_cam_by_name(name_cam)
         if not self._camera_info:
+            logger.error("Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
             raise IndexError(
-                f"Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
-
-        self._file_name = self.get_filename()
+                "Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
+        
 
     def start_cam(self):
         self._camera = QCamera(self._camera_info)
         self._camera.errorOccurred.connect(self._camera_error)
+
         self._image_capture = QImageCapture(self._camera)
         self._image_capture.imageCaptured.connect(self.image_captured)
         self._image_capture.imageSaved.connect(self.image_saved)
         self._image_capture.errorOccurred.connect(self._capture_error)
+        
         self._capture_session = QMediaCaptureSession()
         self._capture_session.setCamera(self._camera)
         self._capture_session.setImageCapture(self._image_capture)
 
         if self._camera and self._camera.error() == QCamera.NoError:
-            # print()
-            name = self._camera_info.description()
             self._capture_session.setVideoOutput(self._video_widget)
             self._camera.start()
         else:
-            print("Camera unavailable")
+            logger.debug("Camera unavailable")
 
     def stop_cam(self) -> None:
         if self._camera and self._camera.isActive():
@@ -62,28 +61,29 @@ class WorkWithCam:
     def __del__(self) -> None:
         self.stop_cam()
 
-    def cupture_image(self) -> str:
+    def cupture_image(self, label: QLabel) -> str:
+        self._label = label
         self._current_preview = QImage()
+        self._file_name = self.get_filename()
+
+        logger.info(F"Создаем файл {self._file_name}")
         self._image_capture.captureToFile(self._file_name)
         return self._file_name
 
     @Slot(int, QImageCapture.Error, str)
     def _capture_error(self, id, error, error_string):
-        print(error_string, file=sys.stderr)
-        self.show_status_message(error_string)
+        logger.error(error_string)
 
     @Slot(QCamera.Error, str)
     def _camera_error(self, error, error_string):
-        print(error_string, file=sys.stderr)
-        self.show_status_message(error_string)
+        logger.error(error_string)
 
-    @staticmethod
-    def get_filename() -> str:
-        return F"{IMAGES_PATH}/propusk_{datetime.now().timestamp()}.jpg"
+    def get_filename(self) -> str:
+        return os.path.join(os.environ.get('PHOTO_DIR'), F"propusk_{datetime.now().timestamp()}.jpg")
 
     def _create_dirs(self):
-        if not os.path.exists(IMAGES_PATH):
-            os.mkdir(IMAGES_PATH)
+        if not os.path.exists(os.environ.get('PHOTO_DIR')):
+            os.mkdir(os.environ.get('PHOTO_DIR'))
 
     @Slot(int, QImage)
     def image_captured(self, id, previewImage):
@@ -91,13 +91,12 @@ class WorkWithCam:
 
     @Slot(int, str)
     def image_saved(self, id, fileName):
-        ...
+        load_image(self._label, fileName)
 
-    def show_status_message(self, message):
-        print(message, 5000)
 
 
 def load_image(qlabel: QLabel, path_file: str) -> None:
+    logger.info(F"Set image to label: {path_file}")
     qlabel.setPixmap(QPixmap(QImage(path_file)).scaled(
         qlabel.width()-4,
         qlabel.height(),
