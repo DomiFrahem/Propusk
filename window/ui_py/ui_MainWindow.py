@@ -335,7 +335,7 @@ class Ui_MainWindow(object):
         self.btn_save.setText(QCoreApplication.translate("MainWindow", u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c", None))
         self.btn_print.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0435\u0447\u0430\u0442\u044c", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
-        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u043a\u0438", None))
+        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438", None))
         self.menu_3.setTitle(QCoreApplication.translate("MainWindow", u"\u0421\u043f\u0438\u0441\u043a\u0438", None))
         self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"\u0418\u0441\u0442\u043e\u0440\u0438\u044f", None))
     # retranslateUi

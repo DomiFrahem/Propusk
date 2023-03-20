@@ -345,7 +345,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>Настроки</string>
+     <string>Настройки</string>
     </property>
     <widget class="QMenu" name="menu_3">
      <property name="title">

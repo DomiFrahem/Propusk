@@ -148,7 +148,7 @@ class Ui_DialogListPersonal(object):
     # setupUi
 
     def retranslateUi(self, DialogListPersonal):
-        DialogListPersonal.setWindowTitle(QCoreApplication.translate("DialogListPersonal", u"Dialog", None))
+        DialogListPersonal.setWindowTitle(QCoreApplication.translate("DialogListPersonal", u"Список сотрудников", None))
         self.groupBox.setTitle(QCoreApplication.translate("DialogListPersonal", u"\u0421\u043f\u0438\u0441\u043e\u043a \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u043e\u0432", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("DialogListPersonal", u"\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435", None))
         self.label.setText(QCoreApplication.translate("DialogListPersonal", u"\u0424\u0430\u043c\u0438\u043b\u0438\u044f", None))

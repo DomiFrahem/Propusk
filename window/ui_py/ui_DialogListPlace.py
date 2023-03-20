@@ -104,7 +104,7 @@ class Ui_DialogListPlace(object):
     # setupUi
 
     def retranslateUi(self, DialogListPlace):
-        DialogListPlace.setWindowTitle(QCoreApplication.translate("DialogListPlace", u"Dialog", None))
+        DialogListPlace.setWindowTitle(QCoreApplication.translate("DialogListPlace", u"Список мест выдачи", None))
         self.groupBox.setTitle(QCoreApplication.translate("DialogListPlace", u"\u0421\u043f\u0438\u0441\u043e\u043a \u043c\u0435\u0441\u0442 \u0432\u044b\u0434\u0430\u0447\u0438", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("DialogListPlace", u"\u0423\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435", None))
         self.label.setText(QCoreApplication.translate("DialogListPlace", u"\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u043c\u0435\u0441\u0442\u0430 \u0432\u044b\u0434\u0430\u0447\u0438:", None))

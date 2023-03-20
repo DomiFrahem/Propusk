@@ -91,7 +91,7 @@ class Ui_DialogSettingCam(object):
     # setupUi
 
     def retranslateUi(self, DialogSettingCam):
-        DialogSettingCam.setWindowTitle(QCoreApplication.translate("DialogSettingCam", u"Dialog", None))
+        DialogSettingCam.setWindowTitle(QCoreApplication.translate("DialogSettingCam", u"Настройка камеры", None))
         self.groupBox.setTitle(QCoreApplication.translate("DialogSettingCam", u"\u0424\u043e\u0442\u043e \u043b\u0438\u0446\u0430", None))
         self.chacked_cam_face.setText(QCoreApplication.translate("DialogSettingCam", u"\u041f\u0440\u043e\u0432\u0435\u0440\u0438\u0442\u044c", None))
         self.stop_cam_face.setText(QCoreApplication.translate("DialogSettingCam", u"\u041e\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c", None))

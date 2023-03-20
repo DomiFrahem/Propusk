@@ -55,7 +55,7 @@ class Ui_DialogHistory(object):
     # setupUi
 
     def retranslateUi(self, DialogHistory):
-        DialogHistory.setWindowTitle(QCoreApplication.translate("DialogHistory", u"Dialog", None))
+        DialogHistory.setWindowTitle(QCoreApplication.translate("DialogHistory", u"История пропусков", None))
         self.groupBox.setTitle(QCoreApplication.translate("DialogHistory", u"\u0421\u043f\u0438\u0441\u043e\u043a", None))
     # retranslateUi
 
