@@ -1,4 +1,3 @@
-import sys
 import os
 
 from PySide6.QtMultimediaWidgets import QVideoWidget
@@ -7,9 +6,9 @@ from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QLabel
 from PySide6.QtMultimedia import (
     QMediaDevices, QCamera, QImageCapture, QMediaCaptureSession)
-from datetime import datetime
 from itertools import groupby
 from logger import logger
+from module.ImageTool import create_filename
 
 if not os.environ.get("PHOTO_DIR"):
     logger.error("Не задана локальная переменная PHOTO_DIR")
@@ -18,7 +17,7 @@ if not os.environ.get("PHOTO_DIR"):
     )
 
 
-class WorkWithCam:
+class USBCam:
     def __init__(self, q_Video_Widget: QVideoWidget, name_cam: str) -> None:
         self._create_dirs()
 
@@ -64,7 +63,7 @@ class WorkWithCam:
     def cupture_image(self, label: QLabel) -> str:
         self._label = label
         self._current_preview = QImage()
-        self._file_name = self.get_filename()
+        self._file_name = create_filename()
 
         logger.info(F"Создаем файл {self._file_name}")
         self._image_capture.captureToFile(self._file_name)
@@ -77,9 +76,6 @@ class WorkWithCam:
     @Slot(QCamera.Error, str)
     def _camera_error(self, error, error_string):
         logger.error(error_string)
-
-    def get_filename(self) -> str:
-        return os.path.join(os.environ.get('PHOTO_DIR'), F"propusk_{datetime.now().timestamp()}.jpg")
 
     def _create_dirs(self):
         if not os.path.exists(os.environ.get('PHOTO_DIR')):
@@ -112,4 +108,3 @@ def get_list_name_cam() -> list:
 
 def get_object_cam_by_name(name_cam: str) -> QMediaDevices:
     return [x for x in QMediaDevices.videoInputs() if x.description() == name_cam][0]
-    

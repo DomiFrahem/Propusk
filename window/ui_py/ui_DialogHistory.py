@@ -1,23 +1,17 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'DialogHistory.ui'
+# Form generated from reading UI file 'DialogHistory.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.1
+# Created by: Qt User Interface Compiler version 6.4.1
 ##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
+# WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QGroupBox, QHBoxLayout,
-    QLineEdit, QListWidget, QListWidgetItem, QSizePolicy,
-    QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtCore import (QCoreApplication, QMetaObject)
+from PySide6.QtWidgets import (QGroupBox, QHBoxLayout,
+                               QLineEdit, QListWidget, QTextBrowser, QVBoxLayout)
+
 
 class Ui_DialogHistory(object):
     def setupUi(self, DialogHistory):
@@ -40,7 +34,6 @@ class Ui_DialogHistory(object):
 
         self.verticalLayout.addWidget(self.list_propusk)
 
-
         self.horizontalLayout.addWidget(self.groupBox)
 
         self.browser = QTextBrowser(DialogHistory)
@@ -48,14 +41,14 @@ class Ui_DialogHistory(object):
 
         self.horizontalLayout.addWidget(self.browser)
 
-
         self.retranslateUi(DialogHistory)
 
         QMetaObject.connectSlotsByName(DialogHistory)
     # setupUi
 
     def retranslateUi(self, DialogHistory):
-        DialogHistory.setWindowTitle(QCoreApplication.translate("DialogHistory", u"История пропусков", None))
-        self.groupBox.setTitle(QCoreApplication.translate("DialogHistory", u"\u0421\u043f\u0438\u0441\u043e\u043a", None))
+        DialogHistory.setWindowTitle(QCoreApplication.translate(
+            "DialogHistory", u"История пропусков", None))
+        self.groupBox.setTitle(QCoreApplication.translate(
+            "DialogHistory", u"\u0421\u043f\u0438\u0441\u043e\u043a", None))
     # retranslateUi
-

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from window.DialogCustomVariables import DialogCustomVariables
 
 
-__VERSION = "ver 0.2"
+__VERSION = "ver 0.3 beta"
 DEFAULT_PATH = os.path.join(appdirs.user_data_dir(), "propusk")
 DEFAULT_PATH_PHOTO = os.path.join(DEFAULT_PATH, "photo")
 

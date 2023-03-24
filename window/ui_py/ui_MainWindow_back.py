@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-# Form generated from reading UI file 'MainWindow.ui'
+## Form generated from reading UI file 'MainWindow.ui'
 ##
-# Created by: Qt User Interface Compiler version 6.4.1
+## Created by: Qt User Interface Compiler version 6.4.1
 ##
-# WARNING! All changes made in this file will be lost when recompiling UI file!
+## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime,
-                            QMetaObject, QRect, QSize, QTime, Qt)
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QRect,
+    QSize, QTime, Qt)
 from PySide6.QtGui import (QAction)
-from PySide6.QtWidgets import (QComboBox, QDateTimeEdit,
-                               QGridLayout, QGroupBox, QHBoxLayout, QLabel, QMenu, QMenuBar,
-                               QPushButton, QSizePolicy, QSplitter, QStatusBar, QTextEdit, QVBoxLayout, QWidget)
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtWidgets import (QComboBox, QDateTimeEdit, QFrame,
+    QGridLayout, QGroupBox, QHBoxLayout, QLabel, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSplitter, QStackedWidget,
+    QStatusBar, QTextEdit, QVBoxLayout, QWidget)
 from PropuskWidgets.PLineEdit import PLineEdit
-from PropuskWidgets.PStackedWidget import PStackedWidget
-
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow, mode='video'):
+    def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.WindowModal)
@@ -27,8 +28,7 @@ class Ui_MainWindow(object):
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            MainWindow.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setBaseSize(QSize(864, 430))
         self.actionExit = QAction(MainWindow)
@@ -42,8 +42,7 @@ class Ui_MainWindow(object):
         self.setting_cam = QAction(MainWindow)
         self.setting_cam.setObjectName(u"setting_cam")
         self.btn_show_personal_window = QAction(MainWindow)
-        self.btn_show_personal_window.setObjectName(
-            u"btn_show_personal_window")
+        self.btn_show_personal_window.setObjectName(u"btn_show_personal_window")
         self.btn_show_place_window = QAction(MainWindow)
         self.btn_show_place_window.setObjectName(u"btn_show_place_window")
         self.update_list = QAction(MainWindow)
@@ -57,8 +56,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setEnabled(True)
-        sizePolicy.setHeightForWidth(
-            self.centralwidget.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
         self.centralwidget.setFocusPolicy(Qt.NoFocus)
         self.centralwidget.setAutoFillBackground(False)
@@ -73,8 +71,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
-        sizePolicy.setHeightForWidth(
-            self.label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
 
         self.horizontalLayout.addWidget(self.label)
@@ -84,6 +81,7 @@ class Ui_MainWindow(object):
         self.number_propusk.setMaxLength(32767)
 
         self.horizontalLayout.addWidget(self.number_propusk)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout)
 
@@ -96,11 +94,11 @@ class Ui_MainWindow(object):
 
         self.date_from = QDateTimeEdit(self.groupBox)
         self.date_from.setObjectName(u"date_from")
-        self.date_from.setDateTime(
-            QDateTime(QDate(1999, 12, 31), QTime(21, 0, 0)))
+        self.date_from.setDateTime(QDateTime(QDate(1999, 12, 31), QTime(21, 0, 0)))
         self.date_from.setTimeSpec(Qt.UTC)
 
         self.horizontalLayout_2.addWidget(self.date_from)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_2)
 
@@ -116,6 +114,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_3.addWidget(self.date_to)
 
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
         self.horizontalLayout_4 = QHBoxLayout()
@@ -129,6 +128,7 @@ class Ui_MainWindow(object):
         self.personal_combobox.setObjectName(u"personal_combobox")
 
         self.horizontalLayout_4.addWidget(self.personal_combobox)
+
 
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
@@ -144,6 +144,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_5.addWidget(self.place_combobox)
 
+
         self.verticalLayout_3.addLayout(self.horizontalLayout_5)
 
         self.verticalLayout = QVBoxLayout()
@@ -157,6 +158,7 @@ class Ui_MainWindow(object):
         self.receiving_man.setObjectName(u"receiving_man")
 
         self.verticalLayout.addWidget(self.receiving_man)
+
 
         self.verticalLayout_3.addLayout(self.verticalLayout)
 
@@ -172,7 +174,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addWidget(self.purpose_visite)
 
+
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
+
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 1)
 
@@ -180,11 +184,43 @@ class Ui_MainWindow(object):
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.verticalLayout_4 = QVBoxLayout(self.groupBox_2)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.stacked_widget_photo = QStackedWidget(self.groupBox_2)
+        self.stacked_widget_photo.setObjectName(u"stacked_widget_photo")
+        self.stacked_widget_photo.setEnabled(True)
+#if QT_CONFIG(tooltip)
+        self.stacked_widget_photo.setToolTip(u"")
+#endif // QT_CONFIG(tooltip)
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.gridLayout_2 = QGridLayout(self.page)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
+        self.imagePhoto = QLabel(self.page)
+        self.imagePhoto.setObjectName(u"imagePhoto")
+        self.imagePhoto.setEnabled(True)
+        sizePolicy.setHeightForWidth(self.imagePhoto.sizePolicy().hasHeightForWidth())
+        self.imagePhoto.setSizePolicy(sizePolicy)
+        self.imagePhoto.setFrameShape(QFrame.Box)
+        self.imagePhoto.setFrameShadow(QFrame.Raised)
+        self.imagePhoto.setWordWrap(False)
 
-        # self.stacked_widget = PStackedWidget(self.groupBox_2, mode)
-        # self.stacked_widget.setObjectName(u'stacked_widget')
-        # self.stacked_widget.setEnabled(True)
-        # self.verticalLayout_4.addWidget(self.stacked_widget)
+        self.gridLayout_2.addWidget(self.imagePhoto, 0, 0, 1, 1)
+
+        self.stacked_widget_photo.addWidget(self.page)
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.gridLayout_4 = QGridLayout(self.page_2)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.face_video_widget = QVideoWidget(self.page_2)
+        self.face_video_widget.setObjectName(u"face_video_widget")
+        self.face_video_widget.setEnabled(False)
+        sizePolicy.setHeightForWidth(self.face_video_widget.sizePolicy().hasHeightForWidth())
+        self.face_video_widget.setSizePolicy(sizePolicy)
+
+        self.gridLayout_4.addWidget(self.face_video_widget, 0, 0, 1, 1)
+
+        self.stacked_widget_photo.addWidget(self.page_2)
+
+        self.verticalLayout_4.addWidget(self.stacked_widget_photo)
 
         self.splitter = QSplitter(self.groupBox_2)
         self.splitter.setObjectName(u"splitter")
@@ -198,28 +234,26 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.splitter)
 
+
         self.gridLayout.addWidget(self.groupBox_2, 0, 1, 1, 2)
 
         self.btn_clear = QPushButton(self.centralwidget)
         self.btn_clear.setObjectName(u"btn_clear")
-        sizePolicy.setHeightForWidth(
-            self.btn_clear.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_clear.sizePolicy().hasHeightForWidth())
         self.btn_clear.setSizePolicy(sizePolicy)
 
         self.gridLayout.addWidget(self.btn_clear, 1, 0, 1, 1)
 
         self.btn_save = QPushButton(self.centralwidget)
         self.btn_save.setObjectName(u"btn_save")
-        sizePolicy.setHeightForWidth(
-            self.btn_save.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_save.sizePolicy().hasHeightForWidth())
         self.btn_save.setSizePolicy(sizePolicy)
 
         self.gridLayout.addWidget(self.btn_save, 1, 1, 1, 1)
 
         self.btn_print = QPushButton(self.centralwidget)
         self.btn_print.setObjectName(u"btn_print")
-        sizePolicy.setHeightForWidth(
-            self.btn_print.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.btn_print.sizePolicy().hasHeightForWidth())
         self.btn_print.setSizePolicy(sizePolicy)
 
         self.gridLayout.addWidget(self.btn_print, 1, 2, 1, 1)
@@ -269,65 +303,39 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate(
-            "MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a", None))
-        self.actionExit.setText(
-            QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.actionSave.setText(
-            QCoreApplication.translate("MainWindow", u"Save", None))
-        self.actionLoad.setText(
-            QCoreApplication.translate("MainWindow", u"Load", None))
-        self.actionExit_2.setText(
-            QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.setting_cam.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u043a\u0438 \u043a\u0430\u043c\u0435\u0440\u044b", None))
-        self.btn_show_personal_window.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0421\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0438", None))
-        self.btn_show_place_window.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u043e\u0447\u0438", None))
-        self.update_list.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043a\u0438", None))
-        self.btn_show_about.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435", None))
-        self.exit.setText(QCoreApplication.translate(
-            "MainWindow", u"Exit", None))
-        self.action_open_history.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043e\u0432", None))
-        self.groupBox.setTitle(QCoreApplication.translate(
-            "MainWindow", u"\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f:", None))
-        self.label.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a \u2116:", None))
-        self.label_2.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0414\u0430\u0442\u0430 \u0438 \u0432\u0440\u0435\u043c\u044f \u0432\u044b\u0434\u0430\u0447\u0438:", None))
-        self.label_4.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u0435\u043d\u0435 \u0434\u043e:", None))
-        self.label_3.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0412\u044b\u0434\u0430\u043b:", None))
-        self.label_5.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u0430\u0447\u0438:", None))
-        self.label_6.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041f\u0440\u0438\u043d\u0438\u043c\u0430\u044e\u0449\u0438\u0439:", None))
-        self.label_7.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0426\u0435\u043b\u044c \u0432\u0438\u0437\u0438\u0442\u0430:", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate(
-            "MainWindow", u"\u0424\u043e\u0442\u043e", None))
-
-        self.btn_start_cam_photo.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c \u043a\u0430\u043c\u0435\u0440\u0443", None))
-        self.capturePhoto.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0421\u0444\u043e\u0442\u043e\u0433\u0440\u0430\u0444\u0438\u0440\u043e\u0432\u0430\u0442\u044c", None))
-        self.btn_clear.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041e\u0442\u0447\u0438\u0441\u0442\u0438\u0442\u044c", None))
-        self.btn_save.setText(QCoreApplication.translate(
-            "MainWindow", u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c", None))
-        self.btn_print.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041f\u0435\u0447\u0430\u0442\u044c", None))
-        self.menuFile.setTitle(
-            QCoreApplication.translate("MainWindow", u"File", None))
-        self.menu.setTitle(QCoreApplication.translate(
-            "MainWindow", u"\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438", None))
-        self.menu_3.setTitle(QCoreApplication.translate(
-            "MainWindow", u"\u0421\u043f\u0438\u0441\u043a\u0438", None))
-        self.menu_2.setTitle(QCoreApplication.translate(
-            "MainWindow", u"\u0418\u0441\u0442\u043e\u0440\u0438\u044f", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a", None))
+        self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.actionLoad.setText(QCoreApplication.translate("MainWindow", u"Load", None))
+        self.actionExit_2.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.setting_cam.setText(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u043a\u0438 \u043a\u0430\u043c\u0435\u0440\u044b", None))
+        self.btn_show_personal_window.setText(QCoreApplication.translate("MainWindow", u"\u0421\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0438", None))
+        self.btn_show_place_window.setText(QCoreApplication.translate("MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u043e\u0447\u0438", None))
+        self.update_list.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043a\u0438", None))
+        self.btn_show_about.setText(QCoreApplication.translate("MainWindow", u"\u041e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435", None))
+        self.exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.action_open_history.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043e\u0432", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f:", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a \u2116:", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u0414\u0430\u0442\u0430 \u0438 \u0432\u0440\u0435\u043c\u044f \u0432\u044b\u0434\u0430\u0447\u0438:", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u0435\u043d\u0435 \u0434\u043e:", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u0412\u044b\u0434\u0430\u043b:", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u0430\u0447\u0438:", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0440\u0438\u043d\u0438\u043c\u0430\u044e\u0449\u0438\u0439:", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u0426\u0435\u043b\u044c \u0432\u0438\u0437\u0438\u0442\u0430:", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u0424\u043e\u0442\u043e", None))
+#if QT_CONFIG(statustip)
+        self.stacked_widget_photo.setStatusTip("")
+#endif // QT_CONFIG(statustip)
+        self.imagePhoto.setText("")
+        self.btn_start_cam_photo.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c \u043a\u0430\u043c\u0435\u0440\u0443", None))
+        self.capturePhoto.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0444\u043e\u0442\u043e\u0433\u0440\u0430\u0444\u0438\u0440\u043e\u0432\u0430\u0442\u044c", None))
+        self.btn_clear.setText(QCoreApplication.translate("MainWindow", u"\u041e\u0442\u0447\u0438\u0441\u0442\u0438\u0442\u044c", None))
+        self.btn_save.setText(QCoreApplication.translate("MainWindow", u"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c", None))
+        self.btn_print.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0435\u0447\u0430\u0442\u044c", None))
+        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438", None))
+        self.menu_3.setTitle(QCoreApplication.translate("MainWindow", u"\u0421\u043f\u0438\u0441\u043a\u0438", None))
+        self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"\u0418\u0441\u0442\u043e\u0440\u0438\u044f", None))
     # retranslateUi
+

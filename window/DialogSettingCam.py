@@ -1,54 +1,57 @@
 from .ui_py.ui_DialogSettingCam import Ui_DialogSettingCam
 from PySide6.QtWidgets import QDialog
-from PySide6.QtCore import Qt, Slot
-from PySide6.QtMultimedia import QMediaDevices
-from module.WorkWithCam import WorkWithCam, get_list_name_cam, load_image
+from PySide6.QtCore import Qt
+
 from module.WorkWithDB import *
+from PropuskWidgets.PCamChecked import PCamChecked
+from logger import logger
+
 
 class SettingCam(QDialog, Ui_DialogSettingCam):
     def __init__(self, parent=None) -> None:
         super(SettingCam, self).__init__(parent)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setupUi(self)
-        
-        self.load_cams()
-        load_image(self.image, os.environ.get("NO_MEDIA_IMAGE"))      
-        self.chacked_cam_face.clicked.connect(self._open_cam_face)
-        self.stop_cam_face.clicked.connect(self._close_cam_face)
-        self.save_setting_cam.clicked.connect(self._save_setting_cam)
 
-    def load_cams(self) -> None:
-        for name in get_list_name_cam():
-            self.face_list_cam.addItem(name)
-        self.load_cams_from_db()
+        self.save_setting_cam.clicked.connect(self.__save_cams)
+        self.mode_list.currentTextChanged.connect(self.__change_mode)
 
-    def _save_setting_cam(self) -> None:
-        self.save_cams(self.face_list_cam.currentText())
+        # self.__recreate_widget()
+        self.__load_cams_from_db()
+        self.__mode = self.mode_list.currentData()
 
-    def _open_cam_face(self) -> None:
-        self.stackedWidget.setCurrentIndex(int(os.environ.get('INDEX_CAMERA')))
-        self._cam_face = WorkWithCam(
-            self.video, self.face_list_cam.currentText())
-        self._cam_face.start_cam()
 
-    def _close_cam_face(self) -> None:
-        if self._cam_face:
-            self.stackedWidget.setCurrentIndex(int(os.environ.get('INDEX_PHOTO')))
-        del self._cam_face
+    def __change_mode(self) -> None:
+        self.__mode = self.mode_list.currentData()
+        self.__recreate_widget(self.__mode)
+        logger.info(F'Change cams to {self.__mode}')
 
-    def load_cams_from_db(self):
+    def __recreate_widget(self, select_mode: str = 'video') -> None:
+        if hasattr(self, 'widget'):
+            delattr(self, 'widget')
+
+        self.widget = PCamChecked(self.groupBox, mode=select_mode)
+        self.widget.setObjectName('widget')
+        self.gridLayout_3.addWidget(self.widget, 1, 0, 1, 1)
+
+    def __load_cams_from_db(self):
         with connect() as conn:
             result = conn.execute(cam_setting.select()).fetchone()
             if result:
-                self.face_list_cam.setCurrentText(result.selected_cam)
-                
-    def save_cams(self, description_cam: str) -> None:
+                self.__recreate_widget(result.mode)
+                match result.mode:
+                    case 'video': self.widget.line_cam.setCurrentText(result.mode)
+                    case 'snapshot': self.widget.line_cam.setText(result.selected_cam)
+            else: self.__recreate_widget()
+
+    def __save_cams(self) -> None:
         query = None
         with connect() as conn:
             result = conn.execute(cam_setting.select()).fetchone()
             if result is None:
-                query = cam_setting.insert().values(selected_cam=description_cam)
+                query = cam_setting.insert().values(
+                    mode=self.__mode, selected_cam=self.widget.get_value())
             else:
                 query = cam_setting.update().where(
-                    cam_setting.c.id == 1).values(selected_cam=description_cam)
+                    cam_setting.c.id == 1).values(mode=self.__mode, selected_cam=self.widget.get_value())
             result = conn.execute(query)

@@ -24,6 +24,7 @@ else:
     
 cam_setting = Table("сam_setting", meta,
                     Column('id', Integer, primary_key=True),
+                    Column('mode', String, nullable=False),
                     Column("selected_cam", String, nullable=False),
                     Column('created', DateTime, default=func.now()),
                     Column('update', DateTime,

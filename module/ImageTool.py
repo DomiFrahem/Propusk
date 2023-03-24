@@ -1,6 +1,8 @@
 from PIL import Image, UnidentifiedImageError
 import os
 from logger import logger
+from datetime import datetime
+
 
 def rotate_image(path_file: str, gradus: int = -90) -> str:
     try:
@@ -22,3 +24,6 @@ def rotate_image(path_file: str, gradus: int = -90) -> str:
         logger.error(F"Не правильный формат: {path_file=}")
         return None
 
+
+def create_filename() -> str:
+    return os.path.join(os.environ.get('PHOTO_DIR'), F"propusk_{datetime.now().timestamp()}.jpg")

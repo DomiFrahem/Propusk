@@ -3,11 +3,12 @@ from PySide6.QtCore import Slot, QDate, QDateTime
 
 from module.WorkWithDB import *
 from module.MyMessageBox import show_dialog
-from module.WorkWithCam import WorkWithCam, load_image
+from PropuskWidgets.PStackedWidget import PStackedWidget
 from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.ImageTool import rotate_image
+from module.cam import IPCam, USBCam
 
 
 from .ui_py.ui_MainWindow import Ui_MainWindow
@@ -33,24 +34,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
 
-        self.stacked_widget_photo.currentChanged.connect(
-            self.current_change_photo
-        )
+        # self.stacked_widget_photo.currentChanged.connect(
+        #     self.current_change_photo
+        # )
 
         self._init_menu_btn_action()
         self._init_push_btn_action()
         self._update_list_combobox()
         self._check_setting_cam()
-        self._init_photo()
+        self._init_widget_cam()
 
     def open_history(self) -> None:
         DialogHistory(self).exec_()
 
-    def current_change_photo(self):
-        if self.stacked_widget_photo.currentIndex() == os.environ.get('INDEX_CAMERA'):
-            self.btn_start_cam_photo.setText(stop_cam)
-        else:
-            self.btn_start_cam_photo.setText(start_cam)
+    # def current_change_photo(self):
+    #     if self.stacked_widget_photo.currentIndex() == os.environ.get('INDEX_CAMERA'):
+    #         self.btn_start_cam_photo.setText(stop_cam)
+    #     else:
+    #         self.btn_start_cam_photo.setText(start_cam)
 
     def _init_menu_btn_action(self) -> None:
         self.action_open_history.triggered.connect(self.open_history)
@@ -75,7 +76,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         DialogAbout(self).exec_()
 
     def _check_setting_cam(self) -> None:
-        if not self._get_selected_cam():
+        try:
+            self.__mode, self.__cam = self.__get_selected_cam()
+        except ValueError:
             logger.warning(warring_cams.get("title"))
             show_dialog(
                 QMessageBox.Warning,
@@ -138,49 +141,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     userData={"id": place.id}
                 )
 
-    def _get_selected_cam(self) -> bool | str:
+    def __get_selected_cam(self) -> bool:
         with connect() as conn:
             cam = conn.execute(
                 cam_setting.select()
             ).fetchone()
 
             try:
-                return cam.selected_cam
+                return cam.mode, cam.selected_cam
             except:
-                return False
+                raise ValueError('Нет записи о камерах')
 
-    def _init_photo(self) -> None:
-        load_image(self.imagePhoto, os.environ.get('NO_MEDIA_IMAGE'))
+    def _init_widget_cam(self) -> None:
+        self.stacked_widget = PStackedWidget(self.groupBox_2, self.__mode)
+        self.stacked_widget.setObjectName(u'stacked_widget')
+        self.verticalLayout_4.addWidget(self.stacked_widget)
 
     @Slot()
     def _start_cam_photo(self) -> None:
-        if self._get_selected_cam():
-            if self.stacked_widget_photo.currentIndex() == int(os.environ.get('INDEX_PHOTO')):
-                self.stacked_widget_photo.setCurrentIndex(
-                    int(os.environ.get('INDEX_CAMERA')))
-                self._create_wwc()
+        if not hasattr(self, '__wwc'):
+            if self.stacked_widget.currentIndex() == int(os.environ.get('INDEX_CAMERA')):
+                self.__stop_cam()
+                self.stacked_widget.to_image()
 
-                self.face_wwc.start_cam()
-            else:
-                self.face_wwc.stop_cam()
-                self.stacked_widget_photo.setCurrentIndex(
-                    int(os.environ.get('INDEX_PHOTO')))
+            self.stacked_widget.to_video()
+            self._create_wwc()
 
     def _create_wwc(self) -> None:
-        if not hasattr(self, "face_wwc"):
-            self.face_wwc = WorkWithCam(
-                q_Video_Widget=self.face_video_widget,
-                name_cam=self._get_selected_cam())
+        match self.__mode:
+            case 'video':
+                self.__wwc = USBCam(self.stacked_widget.video, self.__cam)
+                self.__wwc.start_cam()
+            case 'snapshot':
+                self.__wwc = IPCam()
+                self.__wwc.qLabel = self.stacked_widget.video
+                self.__wwc.lnk_connect = self.__cam
+                self.__wwc.start()
+                print("Started...")
+            case _: return None
 
     @Slot()
     def _take_image_face(self) -> None:
-        if hasattr(self, "face_wwc"):
-            self.face_file_name = self.face_wwc.cupture_image(self.imagePhoto)
-
-            sleep(1)
-            self.stacked_widget_photo.setCurrentIndex(
-                int(os.environ.get('INDEX_PHOTO')))
-            self.face_wwc.stop_cam()
+        self.__file_name = self.__wwc.cupture_image(self.stacked_widget.image)
+            
+        sleep(1)
+        self.stacked_widget.to_image()
+        self.__stop_cam()
 
     @Slot()
     def _print(self) -> None:
@@ -195,8 +201,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         propusk_data["date_to"] = self.date_to.dateTime().toString(
             'dd.MM.yyyy hh:mm')
 
-        rotate_img = rotate_image(self.face_file_name, -90)
-        
+        rotate_img = rotate_image(self.__file_name, -90)
+
         if platform.system() in 'Linux':
             rotate_img = F"file://{rotate_img}"
 
@@ -229,8 +235,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "place": self.place_combobox.currentData()['id'],
             "receiving_man": self.receiving_man.toPlainText(),
             "purpose_visite": self.purpose_visite.toPlainText(),
-            "face_photo": F"{Path(self.face_file_name).name}",
-            "pasport_photo": F"{Path(self.face_file_name).name}"
+            "face_photo": F"{Path(self.__file_name).name}",
+            "pasport_photo": F"{Path(self.__file_name).name}"
         }
 
         with connect() as conn:
@@ -242,10 +248,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.number_propusk.clear()
         self.date_from.setDate(QDate().currentDate())
         self.date_to.setDate(QDate().currentDate())
-        self._init_photo()
+        self._init_widget_cam()
         self.receiving_man.clear()
         self.purpose_visite.clear()
-        self.stacked_widget_photo.setCurrentIndex(
-            int(os.environ.get('INDEX_PHOTO')))
+        self.stacked_widget.to_image()
+
         if hasattr(self, "face_wwc"):
             delattr(self, "face_wwc")
+
+    def __stop_cam(self):
+        self.__wwc.stop_cam()  
+        del self.__wwc
+        self.stacked_widget.to_image()
