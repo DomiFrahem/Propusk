@@ -80,11 +80,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__mode, self.__cam = self.__get_selected_cam()
         except ValueError:
             logger.warning(warring_cams.get("title"))
-            show_dialog(
+            if show_dialog(
                 QMessageBox.Warning,
                 warring_cams.get("title"),
                 warring_cams.get("body")
-            )
+            ):
+                self._show_setting_cam_window()
+                self._check_setting_cam()
+            else:
+                self.close()
 
     def _init_push_btn_action(self) -> None:
         self.btn_start_cam_photo.clicked.connect(
@@ -153,6 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 raise ValueError('Нет записи о камерах')
 
     def _init_widget_cam(self) -> None:
+          
         self.stacked_widget = PStackedWidget(self.groupBox_2, self.__mode)
         self.stacked_widget.setObjectName(u'stacked_widget')
         self.verticalLayout_4.addWidget(self.stacked_widget)

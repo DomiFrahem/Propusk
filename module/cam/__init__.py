@@ -1,2 +1,2 @@
-from .IPCam import IPCam
+from .IPCam import *
 from .USBCam import *

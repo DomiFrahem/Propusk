@@ -1,21 +1,23 @@
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QPushButton, QMessageBox
 from PropuskWidgets.PStackedWidget import PStackedWidget
-from module.cam import IPCam, USBCam, load_image, get_list_name_cam
-import os
+from module.cam import IPCam, USBCam, get_list_name_cam, check_error
+from module.MyMessageBox import show_dialog
+from time import sleep
+
 
 class PCamChecked(QWidget):
     def __init__(self, parent=None, mode: str = 'video') -> None:
         super().__init__(parent)
-        
+
         self.__mode = mode
         self.vLayout = QVBoxLayout(self)
         self.vLayout.setObjectName(u'vLayout')
-        
+
         match self.__mode:
-            case 'video': 
+            case 'video':
                 self.line_cam = QComboBox(self)
-                #load list cam
+                # load list cam
                 [self.line_cam.addItem(x) for x in get_list_name_cam()]
             case 'snapshot': self.line_cam = QLineEdit(self)
 
@@ -40,9 +42,8 @@ class PCamChecked(QWidget):
         self.btn_stop.setText('Остановить')
         self.btn_stop.clicked.connect(self._stop_cam)
         self.hLayout.addWidget(self.btn_stop)
-        
-        self.vLayout.addLayout(self.hLayout)
 
+        self.vLayout.addLayout(self.hLayout)
 
     def get_value(self) -> str:
         match self.__mode:
@@ -53,21 +54,23 @@ class PCamChecked(QWidget):
             case _: return None
 
     def _start_cam(self) -> None:
-        self.pStackedWidget.to_video()
+        
         match self.__mode:
             case 'video':
-                self.__wwc = USBCam(self.pStackedWidget.video, self.line_cam.currentText())
+                self.pStackedWidget.to_video()
+                self.__wwc = USBCam(self.pStackedWidget.video,
+                                    self.line_cam.currentText())
                 self.__wwc.start_cam()
             case 'snapshot':
+                self.pStackedWidget.to_video()
                 self.__wwc = IPCam()
                 self.__wwc.qLabel = self.pStackedWidget.video
                 self.__wwc.lnk_connect = self.line_cam.text()
                 self.__wwc.start()
-                print("Started...")
+                    
             case _: return None
 
-
     def _stop_cam(self):
-        self.__wwc.stop_cam()  
+        self.__wwc.stop_cam()
         del self.__wwc
         self.pStackedWidget.to_image()
