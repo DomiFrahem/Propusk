@@ -207,12 +207,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         propusk_data["date_to"] = self.date_to.dateTime().toString(
             'dd.MM.yyyy hh:mm')
 
-        rotate_img = rotate_image(self.__file_name, -90)
+        # rotate_img = rotate_image(self.__file_name, -90)
 
-        if platform.system() in 'Linux':
-            rotate_img = F"file://{rotate_img}"
+        # if platform.system() in 'Linux':
+        #     rotate_img = F"file://{rotate_img}"
 
-        propusk_data["face_photo"] = rotate_img
+        # propusk_data["face_photo"] = rotate_img
+        propusk_data["face_photo"] = self.__file_name
 
         render_text = TemplatePropusk(
             propusk_data,
