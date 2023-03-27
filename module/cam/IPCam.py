@@ -55,9 +55,10 @@ class IPCam(Thread):
             
                 h, w, ch = color_frame.shape
                 img = QImage(color_frame.data, w, h, ch * w, QImage.Format_RGB888)
-                self.__scaled_img = QPixmap.fromImage(img.scaled(640, 480, Qt.KeepAspectRatio))
+                self.__scaled_img = QPixmap.fromImage(img.scaled(h, w, Qt.KeepAspectRatio))
 
                 self.qLabel.setPixmap(self.__scaled_img)
+                
             # "http://admin:admin102030@192.168.1.108/cgi-bin/snapshot.cgi?2"\
             
         except ConnectionError:

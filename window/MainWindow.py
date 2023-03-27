@@ -157,10 +157,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 raise ValueError('Нет записи о камерах')
 
     def _init_widget_cam(self) -> None:
-          
+        
         self.stacked_widget = PStackedWidget(self.groupBox_2, self.__mode)
         self.stacked_widget.setObjectName(u'stacked_widget')
         self.verticalLayout_4.addWidget(self.stacked_widget)
+        
 
     @Slot()
     def _start_cam_photo(self) -> None:
@@ -253,15 +254,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.number_propusk.clear()
         self.date_from.setDate(QDate().currentDate())
         self.date_to.setDate(QDate().currentDate())
-        self._init_widget_cam()
+        
+        if hasattr(self, 'stacked_widget'):
+            self.__stop_cam()
+            self.stacked_widget.to_image()
+            
+        # self._init_widget_cam()
         self.receiving_man.clear()
         self.purpose_visite.clear()
-        self.stacked_widget.to_image()
-
-        if hasattr(self, "face_wwc"):
-            delattr(self, "face_wwc")
+        
+        # self.__stop_cam()
 
     def __stop_cam(self):
-        self.__wwc.stop_cam()  
-        del self.__wwc
+        if hasattr(self, '__wwc'):
+            self.__wwc.stop_cam()
+            del self.__wwc
+            
         self.stacked_widget.to_image()

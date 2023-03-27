@@ -79,11 +79,12 @@ class DialogHistory(Ui_DialogHistory, QDialog):
 
             pdm = PropuskDataMethods(*row)
             path_photo = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("face_photo"))
-            pdm.set_value("face_photo", rotate_image(path_photo))
+            # pdm.set_value("face_photo", rotate_image(path_photo))
+            pdm.set_value("face_photo", path_photo)
             
             render_text = str(TemplatePropusk(pdm._propusk_data.__dict__,
                                               os.path.join(os.path.dirname(
                                                   os.path.abspath(__package__)), 'docs')
                                               ))
-            logger.info(render_text)
+            # logger.info(render_text)
             self.browser.setText(render_text)
