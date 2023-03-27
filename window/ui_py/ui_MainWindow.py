@@ -280,11 +280,11 @@ class Ui_MainWindow(object):
         self.actionExit_2.setText(
             QCoreApplication.translate("MainWindow", u"Exit", None))
         self.setting_cam.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u043a\u0438 \u043a\u0430\u043c\u0435\u0440\u044b", None))
+            "MainWindow", u"\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u043a\u0430\u043c\u0435\u0440\u044b", None))
         self.btn_show_personal_window.setText(QCoreApplication.translate(
             "MainWindow", u"\u0421\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0438", None))
         self.btn_show_place_window.setText(QCoreApplication.translate(
-            "MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u043e\u0447\u0438", None))
+            "MainWindow", u"\u041c\u0435\u0441\u0442\u043e \u0432\u044b\u0434\u0430\u0447\u0438", None))
         self.update_list.setText(QCoreApplication.translate(
             "MainWindow", u"\u041e\u0431\u043d\u043e\u0432\u0438\u0442\u044c \u0441\u043f\u0438\u0441\u043a\u0438", None))
         self.btn_show_about.setText(QCoreApplication.translate(
