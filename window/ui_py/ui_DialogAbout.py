@@ -20,10 +20,6 @@ class Ui_DialogAbout(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label = QLabel(DialogAbout)
         self.label.setObjectName(u"label")
-        font = QFont()
-        font.setPointSize(30)
-        font.setBold(True)
-        self.label.setFont(font)
         self.label.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.label)

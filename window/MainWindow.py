@@ -45,17 +45,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._init_widget_cam()
         
         self.stacked_widget.currentChanged.connect(
-            self.current_change_photo
+            self.__change_text_in_btn_start_cam
         )
 
     def open_history(self) -> None:
         DialogHistory(self).exec_()
 
-    def current_change_photo(self):
-        if self.stacked_widget.currentIndex() == os.environ.get('INDEX_CAMERA'):
-            self.btn_start_cam_photo.setText(stop_cam)
-        else:
-            self.btn_start_cam_photo.setText(start_cam)
+    def __change_text_in_btn_start_cam(self):
+        match self.stacked_widget.currentIndex():
+            case 0: self.btn_start_cam_photo.setText(start_cam)
+            case 1: self.btn_start_cam_photo.setText(stop_cam)
 
     def _init_menu_btn_action(self) -> None:
         self.action_open_history.triggered.connect(self.open_history)
@@ -111,12 +110,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ListPersonal(self).exec_()
         self._update_list_combobox()
 
-    @Slot()
     def _show_place_window(self) -> None:
         ListPlace(self).exec_()
         self._update_list_combobox()
 
-    @Slot()
     def _show_setting_cam_window(self) -> None:
         SettingCam(self).exec_()
         self._check_setting_cam()
@@ -167,8 +164,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stacked_widget.setObjectName(u'stacked_widget')
         self.verticalLayout_4.addWidget(self.stacked_widget)
         
-
-    @Slot()
     def _start_cam_photo(self) -> None:
         if self.__wwc is None:
             self.stacked_widget.to_video()
@@ -189,7 +184,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.__wwc.start()
             case _: return None
 
-    @Slot()
     def _take_image_face(self) -> None:
         self.__file_name = self.__wwc.cupture_image(self.stacked_widget.image)
             
@@ -197,7 +191,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stacked_widget.to_image()
         self.__stop_cam()
 
-    @Slot()
     def _print(self) -> None:
         if self.data_propusk is None:
             self._save()
@@ -218,14 +211,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         Printer(str(render_text)).print()
 
-    @Slot()
     def _clear(self) -> None:
         if self.data_propusk is not None:
             self.data_propusk = None
 
         self._set_default_data()
 
-    @Slot()
     def _save(self) -> None:
         date_from = self.date_from.dateTime().toMSecsSinceEpoch() / 1000
         date_to = self.date_to.dateTime().toMSecsSinceEpoch() / 1000
@@ -256,11 +247,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__stop_cam()
             self.stacked_widget.to_image()
             
-        # self._init_widget_cam()
         self.receiving_man.clear()
         self.purpose_visite.clear()
-        
-        # self.__stop_cam()
 
     def __stop_cam(self):
         if self.__wwc is not None:

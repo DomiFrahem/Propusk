@@ -19,7 +19,7 @@ from PropuskWidgets.PStackedWidget import PStackedWidget
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow, mode='video'):
+    def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.WindowModal)
@@ -33,10 +33,10 @@ class Ui_MainWindow(object):
         MainWindow.setBaseSize(QSize(864, 430))
         self.actionExit = QAction(MainWindow)
         self.actionExit.setObjectName(u"actionExit")
-        self.actionSave = QAction(MainWindow)
-        self.actionSave.setObjectName(u"actionSave")
-        self.actionLoad = QAction(MainWindow)
-        self.actionLoad.setObjectName(u"actionLoad")
+        # self.actionSave = QAction(MainWindow)
+        # self.actionSave.setObjectName(u"actionSave")
+        # self.actionLoad = QAction(MainWindow)
+        # self.actionLoad.setObjectName(u"actionLoad")
         self.actionExit_2 = QAction(MainWindow)
         self.actionExit_2.setObjectName(u"actionExit_2")
         self.setting_cam = QAction(MainWindow)
@@ -248,8 +248,8 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
         self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionSave)
-        self.menuFile.addAction(self.actionLoad)
+        # self.menuFile.addAction(self.actionSave)
+        # self.menuFile.addAction(self.actionLoad)
         self.menuFile.addAction(self.btn_show_about)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.exit)
@@ -273,10 +273,10 @@ class Ui_MainWindow(object):
             "MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a", None))
         self.actionExit.setText(
             QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.actionSave.setText(
-            QCoreApplication.translate("MainWindow", u"Save", None))
-        self.actionLoad.setText(
-            QCoreApplication.translate("MainWindow", u"Load", None))
+        # self.actionSave.setText(
+        #     QCoreApplication.translate("MainWindow", u"Save", None))
+        # self.actionLoad.setText(
+        #     QCoreApplication.translate("MainWindow", u"Load", None))
         self.actionExit_2.setText(
             QCoreApplication.translate("MainWindow", u"Exit", None))
         self.setting_cam.setText(QCoreApplication.translate(
