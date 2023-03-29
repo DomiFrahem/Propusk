@@ -10,22 +10,16 @@ class PLineEdit(QLineEdit):
         self.setValidator(QRegularExpressionValidator(
             r"\d{14}", self
         ))
-        self._create_id()
         
-        self.textChanged.connect(
-            self._create_id
-        )
-        
-        self.textEdited.connect(
-            self._create_id
-        )
-        
-        self.cursorPositionChanged.connect(
-            self._create_id
-        )
+        self.setReadOnly(True)
+        self.__create_id()
         
     def clear(self) -> None:
-        self._create_id()
+        self.__create_id()
 
-    def _create_id(self) -> None:
+    def __create_id(self) -> None:
         self.setText(datetime.now().strftime("%Y%m%d%H%M%S"))
+        
+    def mousePressEvent(self, event) -> None:
+        self.__create_id()
+        return super().mousePressEvent(event)

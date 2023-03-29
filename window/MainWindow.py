@@ -30,28 +30,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None) -> None:
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
+        self.__wwc = None
+        self.data_propusk = None
 
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
 
-        # self.stacked_widget_photo.currentChanged.connect(
-        #     self.current_change_photo
-        # )
+        
 
         self._init_menu_btn_action()
         self._init_push_btn_action()
         self._update_list_combobox()
         self._check_setting_cam()
         self._init_widget_cam()
+        
+        self.stacked_widget.currentChanged.connect(
+            self.current_change_photo
+        )
 
     def open_history(self) -> None:
         DialogHistory(self).exec_()
 
-    # def current_change_photo(self):
-    #     if self.stacked_widget_photo.currentIndex() == os.environ.get('INDEX_CAMERA'):
-    #         self.btn_start_cam_photo.setText(stop_cam)
-    #     else:
-    #         self.btn_start_cam_photo.setText(start_cam)
+    def current_change_photo(self):
+        if self.stacked_widget.currentIndex() == os.environ.get('INDEX_CAMERA'):
+            self.btn_start_cam_photo.setText(stop_cam)
+        else:
+            self.btn_start_cam_photo.setText(start_cam)
 
     def _init_menu_btn_action(self) -> None:
         self.action_open_history.triggered.connect(self.open_history)
@@ -115,6 +119,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     @Slot()
     def _show_setting_cam_window(self) -> None:
         SettingCam(self).exec_()
+        self._check_setting_cam()
 
     def _update_list_combobox(self) -> None:
         self._load_personal()
@@ -130,7 +135,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 fio = F"{personal.lastname} {personal.firstname} {personal.middlename}"
                 self.personal_combobox.addItem(
                     fio,
-                    userData={"id": personal.id}
+                    userData=personal.id
                 )
 
     def _load_place(self) -> None:
@@ -142,7 +147,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ).all():
                 self.place_combobox.addItem(
                     place.name_place,
-                    userData={"id": place.id}
+                    userData=place.id
                 )
 
     def __get_selected_cam(self) -> bool:
@@ -165,14 +170,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def _start_cam_photo(self) -> None:
-        if not hasattr(self, '__wwc'):
-            if self.stacked_widget.currentIndex() == int(os.environ.get('INDEX_CAMERA')):
-                self.__stop_cam()
-                self.stacked_widget.to_image()
-
+        if self.__wwc is None:
             self.stacked_widget.to_video()
             self._create_wwc()
-
+        else:
+            self.__stop_cam()      
+            self.stacked_widget.to_image()
+            
     def _create_wwc(self) -> None:
         match self.__mode:
             case 'video':
@@ -183,7 +187,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.__wwc.qLabel = self.stacked_widget.video
                 self.__wwc.lnk_connect = self.__cam
                 self.__wwc.start()
-                print("Started...")
             case _: return None
 
     @Slot()
@@ -196,7 +199,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def _print(self) -> None:
-        if not hasattr(self, "data_propusk"):
+        if self.data_propusk is None:
             self._save()
 
         propusk_data = self.data_propusk.copy()
@@ -206,13 +209,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             'dd.MM.yyyy hh:mm')
         propusk_data["date_to"] = self.date_to.dateTime().toString(
             'dd.MM.yyyy hh:mm')
-
-        # rotate_img = rotate_image(self.__file_name, -90)
-
-        # if platform.system() in 'Linux':
-        #     rotate_img = F"file://{rotate_img}"
-
-        # propusk_data["face_photo"] = rotate_img
         propusk_data["face_photo"] = self.__file_name
 
         render_text = TemplatePropusk(
@@ -224,8 +220,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @Slot()
     def _clear(self) -> None:
-        if hasattr(self, "data_propusk"):
-            del self.data_propusk
+        if self.data_propusk is not None:
+            self.data_propusk = None
 
         self._set_default_data()
 
@@ -238,8 +234,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "id_propusk": int(self.number_propusk.text()),
             "date_from": datetime.fromtimestamp(date_from),
             "date_to": datetime.fromtimestamp(date_to),
-            "personal": self.personal_combobox.currentData()['id'],
-            "place": self.place_combobox.currentData()['id'],
+            "personal": self.personal_combobox.currentData(),
+            "place": self.place_combobox.currentData(),
             "receiving_man": self.receiving_man.toPlainText(),
             "purpose_visite": self.purpose_visite.toPlainText(),
             "face_photo": F"{Path(self.__file_name).name}",
@@ -256,7 +252,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.date_from.setDate(QDate().currentDate())
         self.date_to.setDate(QDate().currentDate())
         
-        if hasattr(self, 'stacked_widget'):
+        if self.__wwc is not None:
             self.__stop_cam()
             self.stacked_widget.to_image()
             
@@ -267,8 +263,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.__stop_cam()
 
     def __stop_cam(self):
-        if hasattr(self, '__wwc'):
+        if self.__wwc is not None:
             self.__wwc.stop_cam()
-            del self.__wwc
+            self.__wwc = None
             
         self.stacked_widget.to_image()
