@@ -19,9 +19,10 @@ class PLineEdit(QLineEdit):
 
     def __create_id(self) -> None:
         self.setText(datetime.now().strftime("%Y%m%d%H%M%S"))
-        
-    def mousePressEvent(self) -> None:
-        self.__create_id()
     
+        
+    def mousePressEvent(self, action) -> None:
+        self.__create_id()
+        
     def get_value(self) -> None:
         return int(self.text())
