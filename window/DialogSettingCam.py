@@ -1,6 +1,6 @@
 from .ui_py.ui_DialogSettingCam import Ui_DialogSettingCam
 from PySide6.QtWidgets import QDialog
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 
 from module.WorkWithDB import *
 from PropuskWidgets.PCamChecked import PCamChecked
@@ -13,45 +13,88 @@ class SettingCam(QDialog, Ui_DialogSettingCam):
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setupUi(self)
 
+        self.widget = None
+
+        self.__mode = self.mode_list.currentData()
+        self.__load_cams_from_db()
+
         self.save_setting_cam.clicked.connect(self.__save_cams)
-        self.mode_list.currentTextChanged.connect(self.__change_mode)
+        self.mode_list.currentIndexChanged.connect(self.__change_mode)
+        self.tabWidget.currentChanged.connect(self.__change_type)
 
         # self.__recreate_widget()
-        self.__load_cams_from_db()
-        self.__mode = self.mode_list.currentData()
 
+    def __change_type(self) -> None:
+        if self.tabWidget.currentIndex() == 1:
+            self.__mode = 'document'
+
+        self.__load_cams_from_db()
 
     def __change_mode(self) -> None:
         self.__mode = self.mode_list.currentData()
         self.__recreate_widget(self.__mode)
         logger.info(F'Change cams to {self.__mode}')
 
+    @Slot()
     def __recreate_widget(self, select_mode: str = 'video') -> None:
-        if hasattr(self, 'widget'):
-            delattr(self, 'widget')
+        self.__del_widget()
+        if self.tabWidget.currentIndex() == 0:
+            self.__create_widget(
+                mode=select_mode,
+                tab=self.tab,
+                layout=self.verticalLayout)
+        else:
+            self.__create_widget(
+                tab=self.tab_2,
+                layout=self.verticalLayout_3)
 
-        self.widget = PCamChecked(self.groupBox, mode=select_mode)
+    def __create_widget(self, tab, layout, mode: str = 'video') -> None:
+        self.widget = PCamChecked(tab, mode=mode)
         self.widget.setObjectName('widget')
-        self.gridLayout_3.addWidget(self.widget, 1, 0, 1, 1)
+        layout.addWidget(self.widget)
+
+    def __del_widget(self) -> None:
+        if self.widget is not None:
+            self.verticalLayout.removeWidget(self.widget)
+            self.verticalLayout_3.removeWidget(self.widget)
+
+        self.widget = None
 
     def __load_cams_from_db(self):
         with connect() as conn:
-            result = conn.execute(cam_setting.select()).fetchone()
+            result = conn.execute(cam_setting.select().where(
+                cam_setting.c.type == self.tabWidget.currentIndex()
+            )).fetchone()
             if result:
-                self.__recreate_widget(result.mode)
-                match result.mode:
-                    case 'video': self.widget.line_cam.setCurrentText(result.mode)
-                    case 'snapshot': self.widget.line_cam.setText(result.selected_cam)
+                self.__mode = result.mode
+                self.__recreate_widget(self.__mode)
+                match self.__mode:
+                    case 'video':
+                        self.mode_list.setCurrentIndex(0)
+                        self.widget.line_cam.setCurrentText(
+                            result.selected_cam)
+                    case 'snapshot':
+                        self.mode_list.setCurrentIndex(1)
+                        self.widget.line_cam.setText(result.selected_cam)
+                    case 'document':
+                        self.widget.line_cam.setCurrentText(
+                            result.selected_cam)
+                    case _: ...
             else: self.__recreate_widget()
 
     def __save_cams(self) -> None:
         query = None
         with connect() as conn:
-            result = conn.execute(cam_setting.select()).fetchone()
+            result = conn.execute(cam_setting.select().where(
+                cam_setting.c.type == self.tabWidget.currentIndex()
+            )).fetchone()
             if result is None:
                 query = cam_setting.insert().values(
-                    mode=self.__mode, selected_cam=self.widget.get_value())
+                    type=self.tabWidget.currentIndex(),
+                    mode=self.__mode,
+                    selected_cam=self.widget.get_value())
             else:
                 query = cam_setting.update().where(
-                    cam_setting.c.id == 1).values(mode=self.__mode, selected_cam=self.widget.get_value())
+                    cam_setting.c.type == self.tabWidget.currentIndex()
+                ).values(mode=self.__mode, selected_cam=self.widget.get_value())
             result = conn.execute(query)

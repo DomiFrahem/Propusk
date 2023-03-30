@@ -1,6 +1,7 @@
 from sqlalchemy import (MetaData, Table, Column, Integer,
                         DateTime, String, Text, ForeignKey,
                         create_engine, func)
+from sqlalchemy.exc import ProgrammingError
 import os
 from module.MyMessageBox import show_dialog
 from PySide6.QtWidgets import QMessageBox
@@ -24,6 +25,7 @@ else:
     
 cam_setting = Table("сam_setting", meta,
                     Column('id', Integer, primary_key=True),
+                    Column('type', Integer, nullable=False),
                     Column('mode', String, nullable=False),
                     Column("selected_cam", String, nullable=False),
                     Column('created', DateTime, default=func.now()),
@@ -76,3 +78,13 @@ def init_db():
 
 def connect():
     return engine.connect()
+
+
+def check_error_sql(func):
+    def wrapper(*arg, **args):
+        try:
+            return func(arg, args)
+        except ProgrammingError as pe:
+            logger.error(pe)
+            
+    return wrapper

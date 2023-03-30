@@ -34,13 +34,13 @@ class PCamChecked(QWidget):
         self.btn_check = QPushButton(self)
         self.btn_check.setObjectName('btn_check')
         self.btn_check.setText('Проверить')
-        self.btn_check.clicked.connect(self._start_cam)
+        self.btn_check.clicked.connect(self.__start_cam)
         self.hLayout.addWidget(self.btn_check)
 
         self.btn_stop = QPushButton(self)
         self.btn_stop.setObjectName('btn_stop')
         self.btn_stop.setText('Остановить')
-        self.btn_stop.clicked.connect(self._stop_cam)
+        self.btn_stop.clicked.connect(self.__stop_cam)
         self.hLayout.addWidget(self.btn_stop)
 
         self.vLayout.addLayout(self.hLayout)
@@ -53,7 +53,7 @@ class PCamChecked(QWidget):
                 return self.line_cam.text()
             case _: return None
 
-    def _start_cam(self) -> None:
+    def __start_cam(self) -> None:
         
         match self.__mode:
             case 'video':
@@ -70,7 +70,10 @@ class PCamChecked(QWidget):
                     
             case _: return None
 
-    def _stop_cam(self):
+    def __stop_cam(self):
         self.__wwc.stop_cam()
         del self.__wwc
         self.pStackedWidget.to_image()
+        
+    def __del__(self) -> None:
+        self.__stop_cam
