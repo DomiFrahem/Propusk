@@ -11,7 +11,6 @@
 from PySide6.QtCore import (QCoreApplication, QMetaObject)
 from PySide6.QtWidgets import (
     QComboBox, QPushButton, QTabWidget, QVBoxLayout, QWidget)
-from PropuskWidgets.PCamChecked import PCamChecked
 
 
 class Ui_DialogSettingCam(object):

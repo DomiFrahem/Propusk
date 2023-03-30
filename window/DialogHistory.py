@@ -71,20 +71,24 @@ class DialogHistory(Ui_DialogHistory, QDialog):
                     func.format(list_place.c.name_place).label("place"),
                     list_propusk.c.receiving_man,
                     list_propusk.c.purpose_visite,
-                    list_propusk.c.face_photo
+                    list_propusk.c.face,
+                    list_propusk.c.document
                 ).select_from(list_propusk).join(
                     list_personal, list_propusk.c.personal == list_personal.c.id
+                ).join(
+                    list_place, list_propusk.c.place == list_place.c.id
                 ).where(list_propusk.c.id_propusk == id_propusk)
             ).fetchone()
 
             pdm = PropuskDataMethods(*row)
-            path_photo = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("face_photo"))
-            # pdm.set_value("face_photo", rotate_image(path_photo))
-            pdm.set_value("face_photo", path_photo)
+            face = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("face"))
+            documet = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("document"))
+            pdm.set_value("face", face)
+            pdm.set_value("document", documet)
+            
             
             render_text = str(TemplatePropusk(pdm._propusk_data.__dict__,
                                               os.path.join(os.path.dirname(
                                                   os.path.abspath(__package__)), 'docs')
                                               ))
-            # logger.info(render_text)
             self.browser.setText(render_text)

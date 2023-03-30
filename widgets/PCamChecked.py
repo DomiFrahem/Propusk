@@ -1,9 +1,7 @@
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QComboBox, QPushButton, QMessageBox
-from PropuskWidgets.PStackedWidget import PStackedWidget
-from module.cam import IPCam, USBCam, get_list_name_cam, check_error
-from module.MyMessageBox import show_dialog
-from time import sleep
+from widgets.PStackedWidget import PStackedWidget
+from module.cam import IPCam, USBCam, get_list_name_cam
 
 
 class PCamChecked(QWidget):

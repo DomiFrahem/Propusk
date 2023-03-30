@@ -52,8 +52,8 @@ class PStackedWidget(QStackedWidget):
     def to_video(self) -> None:
         self.setCurrentIndex(1)
 
-    def cupture_image(self) -> None:
-        if self.__mode == 'video':
-            self.video = self.video.cupture_image(self.image)
-        else:
-            self.video = self.video.cupture_image(self.image)
+    # def cupture_image(self) -> None:
+    #     if self.__mode == 'video':
+    #         self.video = self.video.cupture_image(self.image)
+    #     else:
+    #         self.video = self.video.cupture_image(self.image)

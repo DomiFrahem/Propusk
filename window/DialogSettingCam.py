@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Qt, Slot
 
 from module.WorkWithDB import *
-from PropuskWidgets.PCamChecked import PCamChecked
+from widgets import create_widget_cam_shecked
 from logger import logger
 
 
@@ -39,19 +39,16 @@ class SettingCam(QDialog, Ui_DialogSettingCam):
     def __recreate_widget(self, select_mode: str = 'video') -> None:
         self.__del_widget()
         if self.tabWidget.currentIndex() == 0:
-            self.__create_widget(
-                mode=select_mode,
-                tab=self.tab,
+            self.widget = create_widget_cam_shecked(mode=select_mode,
+                name_object=u'widget',
+                obj=self.tab,
                 layout=self.verticalLayout)
         else:
-            self.__create_widget(
-                tab=self.tab_2,
+            self.widget = create_widget_cam_shecked(
+                name_object=U'widget',
+                obj=self.tab_2,
                 layout=self.verticalLayout_3)
 
-    def __create_widget(self, tab, layout, mode: str = 'video') -> None:
-        self.widget = PCamChecked(tab, mode=mode)
-        self.widget.setObjectName('widget')
-        layout.addWidget(self.widget)
 
     def __del_widget(self) -> None:
         if self.widget is not None:

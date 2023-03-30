@@ -34,7 +34,8 @@ class PropuskData:
     place: Place
     receiving_man: str
     purpose_visite: str
-    face_photo: str
+    face: str
+    document: str
 
 
 class PropuskDataMethods:
@@ -45,7 +46,8 @@ class PropuskDataMethods:
                  place: Place = None,
                  receiving_man: str = None,
                  purpose_visite: str = None,
-                 face_photo: str = None):
+                 face: str = None,
+                 document: str = None):
 
         self._propusk_data = PropuskData(id_propusk,
                                          date_from,
@@ -54,7 +56,8 @@ class PropuskDataMethods:
                                          place,
                                          receiving_man,
                                          purpose_visite,
-                                         face_photo)
+                                         face,
+                                         document)
 
     @key_error
     def set_value(self, key: str, value: str | int | datetime | Personal | Place):

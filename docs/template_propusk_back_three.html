@@ -1,0 +1,38 @@
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    {% for _ in range(2) %}
+    <table>
+        <tr>
+            <td colspan="2">
+                <img src="{{ face_photo }}" width="600" height="300"/>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Временный пропуск №:</b> {{ id_propusk }}</td>
+            <td><b>Место выдачи:</b> {{ place }}</td>
+        </tr>
+        <tr>
+            <td><b>Дата выдачи:</b> {{ date_from }}</td>
+            <td><b>Принимающий:</b><br> {{ receiving_man }}</td>
+        </tr>
+        <tr>
+            <td><b>Действителен до:</b> {{ date_to }}</td>
+            <td><b>Цель визита:</b><br> {{ purpose_visite }}</td>
+        </tr>
+    </table>
+    <hr />
+    {% endfor %}
+</body>
+
+</html>

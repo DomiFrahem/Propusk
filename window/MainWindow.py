@@ -1,15 +1,14 @@
 from PySide6.QtWidgets import QMainWindow, QMessageBox
-from PySide6.QtCore import Slot, QDate, QDateTime
+from PySide6.QtCore import QDate, QDateTime
 
 from module.WorkWithDB import *
 from module.MyMessageBox import show_dialog
-from PropuskWidgets.PStackedWidget import PStackedWidget
 from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
-from module.ImageTool import rotate_image
-from module.cam import IPCam, USBCam
+from module.cam import IPCam, USBCam, load_image
 
+from widgets import PStackedWidget, create_widget_stacked
 
 from .ui_py.ui_MainWindow import Ui_MainWindow
 from .ListPersonal import ListPersonal
@@ -23,7 +22,9 @@ from time import sleep
 from datetime import datetime
 from logger import logger
 from pathlib import Path
-import platform
+
+
+vecrot_cam_from_db = [str, str, str]
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -36,51 +37,84 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
 
-        
+        self.__init_menu_action()
+        self.__init_btn_action()
+        self.__update_list_combobox()
+        self.__check_setting_cam()
+        self.__create_widget_face_cam()
 
-        self._init_menu_btn_action()
-        self._init_push_btn_action()
-        self._update_list_combobox()
-        self._check_setting_cam()
-        self._init_widget_cam()
-        
-        self.stacked_widget.currentChanged.connect(
+        self.stacked_document.currentChanged.connect(
             self.__change_text_in_btn_start_cam
         )
+
+        self.tabWidget.currentChanged.connect(
+            self.change_tab
+        )
+
+    def __change_text_in_btn_start_cam(self):
+        match self.tabWidget.currentIndex():
+            case 0: self.btn_start_cam.setText(start_cam)
+            case 1: self.btn_start_cam.setText(stop_cam)
+
+    def __init_menu_action(self) -> None:
+        self.action_open_history.triggered.connect(self.open_history)
+        self.btn_show_personal_window.triggered.connect(
+            self.__show_personal_window
+        )
+        self.btn_show_place_window.triggered.connect(
+            self.__show_place_window
+        )
+        self.setting_cam.triggered.connect(
+            self.__show_setting_cam_window
+        )
+        self.update_list.triggered.connect(
+            self.__update_list_combobox
+        )
+
+        self.btn_show_about.triggered.connect(
+            self.__show_about_dialog
+        )
+
+    def __init_btn_action(self) -> None:
+        self.btn_start_cam.clicked.connect(
+            self.__press_btn_start_cam
+        )
+
+        self.capturePhoto.clicked.connect(
+            self.__take_image_face
+        )
+
+        self.btn_save.clicked.connect(self.__save)
+        self.btn_clear.clicked.connect(self.__clear)
+        self.btn_print.clicked.connect(self.__print)
+
+    def __show_about_dialog(self):
+        DialogAbout(self).exec_()
+
+    def __show_personal_window(self) -> None:
+        ListPersonal(self).exec_()
+        self.__update_list_combobox()
+
+    def __show_place_window(self) -> None:
+        ListPlace(self).exec_()
+        self.__update_list_combobox()
+
+    def __show_setting_cam_window(self) -> None:
+        SettingCam(self).exec_()
+        self.__check_setting_cam()
+        self.__create_widget_face_cam()
 
     def open_history(self) -> None:
         DialogHistory(self).exec_()
 
-    def __change_text_in_btn_start_cam(self):
-        match self.stacked_widget.currentIndex():
-            case 0: self.btn_start_cam_photo.setText(start_cam)
-            case 1: self.btn_start_cam_photo.setText(stop_cam)
+    def change_tab(self) -> None:
+        self.__check_setting_cam()
+        if self.tabWidget.currentIndex() == 1:
+            self.__mode = 'video'
 
-    def _init_menu_btn_action(self) -> None:
-        self.action_open_history.triggered.connect(self.open_history)
-        self.btn_show_personal_window.triggered.connect(
-            self._show_personal_window
-        )
-        self.btn_show_place_window.triggered.connect(
-            self._show_place_window
-        )
-        self.setting_cam.triggered.connect(
-            self._show_setting_cam_window
-        )
-        self.update_list.triggered.connect(
-            self._update_list_combobox
-        )
-
-        self.btn_show_about.triggered.connect(
-            self._show_about_dialog
-        )
-
-    def _show_about_dialog(self):
-        DialogAbout(self).exec_()
-
-    def _check_setting_cam(self) -> None:
+    def __check_setting_cam(self) -> None:
         try:
-            self.__mode, self.__cam = self.__get_selected_cam()
+            self.__mode, self.__cam_face, self.__cam_document = self.__get_selected_cam()
         except ValueError:
             logger.warning(warring_cams.get("title"))
             if show_dialog(
@@ -88,41 +122,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 warring_cams.get("title"),
                 warring_cams.get("body")
             ):
-                self._show_setting_cam_window()
-                self._check_setting_cam()
+                self.__show_setting_cam_window()
+                self.__check_setting_cam()
             else:
                 self.close()
 
-    def _init_push_btn_action(self) -> None:
-        self.btn_start_cam_photo.clicked.connect(
-            self._start_cam_photo
-        )
+    def __update_list_combobox(self) -> None:
+        self.__load_personal()
+        self.__load_place()
 
-        self.capturePhoto.clicked.connect(
-            self._take_image_face
-        )
-
-        self.btn_save.clicked.connect(self._save)
-        self.btn_clear.clicked.connect(self._clear)
-        self.btn_print.clicked.connect(self._print)
-
-    def _show_personal_window(self) -> None:
-        ListPersonal(self).exec_()
-        self._update_list_combobox()
-
-    def _show_place_window(self) -> None:
-        ListPlace(self).exec_()
-        self._update_list_combobox()
-
-    def _show_setting_cam_window(self) -> None:
-        SettingCam(self).exec_()
-        self._check_setting_cam()
-
-    def _update_list_combobox(self) -> None:
-        self._load_personal()
-        self._load_place()
-
-    def _load_personal(self) -> None:
+    def __load_personal(self) -> None:
         self.personal_combobox.clear()
 
         with connect() as conn:
@@ -135,7 +144,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     userData=personal.id
                 )
 
-    def _load_place(self) -> None:
+    def __load_place(self) -> None:
         self.place_combobox.clear()
 
         with connect() as conn:
@@ -147,62 +156,77 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     userData=place.id
                 )
 
-    def __get_selected_cam(self) -> bool:
+    def __get_selected_cam(self) -> vecrot_cam_from_db:
+        '''
+        return: 
+            str -> video, snapshot
+            str -> ссылка для подключения к ip камеры или названия камеры (для лица)
+            str -> названия камеры (для документа)
+        '''
         with connect() as conn:
             cam = conn.execute(
                 cam_setting.select()
-            ).fetchone()
+            ).all()
 
             try:
-                return cam.mode, cam.selected_cam
+                return cam[0].mode, cam[0].selected_cam, cam[1].selected_cam
             except:
-                raise ValueError('Нет записи о камерах')
+                logger.error('Нет записи о камерах')
+                show_dialog(
+                    QMessageBox.Icon.Critical,
+                    'Отсутствуют записи о камерах',
+                    'Отсутствуют записи о камерах'
+                )
 
-    def _init_widget_cam(self) -> None:
-        
-        self.stacked_widget = PStackedWidget(self.groupBox_2, self.__mode)
-        self.stacked_widget.setObjectName(u'stacked_widget')
-        self.verticalLayout_4.addWidget(self.stacked_widget)
-        
-    def _start_cam_photo(self) -> None:
+    def __press_btn_start_cam(self):
+        match self.tabWidget.currentIndex():
+            case 0: self.__start_cam(self.stacked_face, self.__cam_face)
+            case 1: self.__start_cam(self.stacked_document, self.__cam_document)
+
+    def __start_cam(self, widget: PStackedWidget, cam: str) -> None:
         if self.__wwc is None:
-            self.stacked_widget.to_video()
-            self._create_wwc()
+            widget.to_video()
+            self.__create_wwc(widget, cam)
         else:
-            self.__stop_cam()      
-            self.stacked_widget.to_image()
-            
-    def _create_wwc(self) -> None:
-        match self.__mode:
-            case 'video':
-                self.__wwc = USBCam(self.stacked_widget.video, self.__cam)
-                self.__wwc.start_cam()
-            case 'snapshot':
-                self.__wwc = IPCam()
-                self.__wwc.qLabel = self.stacked_widget.video
-                self.__wwc.lnk_connect = self.__cam
-                self.__wwc.start()
-            case _: return None
+            self.__stop_cam()
+            widget.to_image()
 
-    def _take_image_face(self) -> None:
-        self.__file_name = self.__wwc.cupture_image(self.stacked_widget.image)
+    def __create_wwc(self, widget: PStackedWidget, cam: str) -> None:
+        if self.__mode in 'snapshot':
+            self.__wwc = IPCam()
+            self.__wwc.qLabel = widget.video
+            self.__wwc.lnk_connect = cam
+            self.__wwc.start()
+        else:
+            self.__wwc = USBCam(widget.video, cam)
+            self.__wwc.start_cam()
+
+    def __take_image_face(self) -> None:
+        if self.tabWidget.currentIndex() == 1:
+            self.__file_name_document = self.__wwc.cupture_image(self.stacked_document.image)
+            sleep(1)
+            load_image(self.stacked_document.image, self.__file_name_document)
+        else:
+            self.__file_name_face = self.__wwc.cupture_image(self.stacked_face.image)
+            sleep(1)
+            load_image(self.stacked_face.image, self.__file_name_face)
             
-        sleep(1)
-        self.stacked_widget.to_image()
         self.__stop_cam()
 
-    def _print(self) -> None:
+    def __print(self) -> None:
         if self.data_propusk is None:
-            self._save()
+            self.__save()
 
         propusk_data = self.data_propusk.copy()
-        propusk_data["personal"] = self.personal_combobox.currentText()
-        propusk_data["place"] = self.place_combobox.currentText()
-        propusk_data["date_from"] = self.date_from.dateTime().toString(
-            'dd.MM.yyyy hh:mm')
-        propusk_data["date_to"] = self.date_to.dateTime().toString(
-            'dd.MM.yyyy hh:mm')
-        propusk_data["face_photo"] = self.__file_name
+        
+        propusk_data.update({
+            "personal": self.personal_combobox.currentText(),
+            "place": self.place_combobox.currentText(),
+            "date_from": self.date_from.dateTime().toString('dd.MM.yyyy hh:mm'),
+            "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
+            "face": self.__file_name_face,
+            "document": self.__file_name_face        
+        })
 
         render_text = TemplatePropusk(
             propusk_data,
@@ -211,13 +235,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         Printer(str(render_text)).print()
 
-    def _clear(self) -> None:
+    def __clear(self) -> None:
         if self.data_propusk is not None:
             self.data_propusk = None
 
-        self._set_default_data()
+        self.__set_default_data()
 
-    def _save(self) -> None:
+    def __save(self) -> None:
         date_from = self.date_from.dateTime().toMSecsSinceEpoch() / 1000
         date_to = self.date_to.dateTime().toMSecsSinceEpoch() / 1000
 
@@ -229,8 +253,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "place": self.place_combobox.currentData(),
             "receiving_man": self.receiving_man.toPlainText(),
             "purpose_visite": self.purpose_visite.toPlainText(),
-            "face_photo": F"{Path(self.__file_name).name}",
-            "pasport_photo": F"{Path(self.__file_name).name}"
+            "face": F"{Path(self.__file_name_face).name}",
+            "document": F"{Path(self.__file_name_document).name}"
         }
 
         with connect() as conn:
@@ -238,14 +262,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 list_propusk.insert().values(**self.data_propusk)
             )
 
-    def _set_default_data(self) -> None:
+    def __set_default_data(self) -> None:
         self.number_propusk.clear()
         self.date_from.setDate(QDate().currentDate())
         self.date_to.setDate(QDate().currentDate())
-        
+
         if self.__wwc is not None:
             self.__stop_cam()
-            self.stacked_widget.to_image()
             
         self.receiving_man.clear()
         self.purpose_visite.clear()
@@ -254,5 +277,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.__wwc is not None:
             self.__wwc.stop_cam()
             self.__wwc = None
-            
-        self.stacked_widget.to_image()
+
+        if self.tabWidget.currentIndex() == 1:
+            self.stacked_document.to_image()
+        else: self.stacked_face.to_image()
+
+    def __create_widget_face_cam(self) -> None:
+        if hasattr(self, 'stacked_face'):
+            self.gridLayout.removeWidget(self.stacked_face)
+        self.stacked_face = create_widget_stacked(
+            name_object=u'stacked_face',
+            obj=self.tab,
+            layout=self.gridLayout,
+            mode=self.__mode)
+        
+        self.stacked_face.currentChanged.connect(
+            self.__change_text_in_btn_start_cam
+        )
+        

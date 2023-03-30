@@ -10,7 +10,6 @@ class CleanerImage:
         
         if os.path.exists(path):    
             self._files_in_db = self._get_list_files_from_db()
-            logger.info(self._files_in_db)
         else:
             logger.error(F"Не корректный путь: {path}")
             raise ValueError(F"Не корректный путь: {path}")
@@ -18,18 +17,18 @@ class CleanerImage:
     def _get_list_files_from_db(self) -> list:
         with connect() as conn:
             list_files = select(
-                list_propusk.c.face_photo,
-                list_propusk.c.pasport_photo
+                list_propusk.c.face,
+                list_propusk.c.document
             ).select_from(list_propusk)
             
-            return sum([[self._only_file(x[0]), self._only_file(x[0])]
-                        for x in conn.execute(list_files).all()], [])
-
-    def _only_file(self, path: str) -> str:
-        if '/' in path:
-            return path.split('/')[-1]
-        else:
-            return path.split('\\')[-1]
+            result = conn.execute(list_files).all()
+            
+            images = []
+            for face, document in result:
+                images.append(face)
+                images.append(document)
+            
+            return images
 
     def clear(self) -> None:
         _, _, files = os.walk(self._path).__next__()
