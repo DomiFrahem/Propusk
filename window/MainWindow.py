@@ -215,6 +215,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.stacked_face.image)
             self.stacked_face.to_image()
 
+        self.btn_start_cam.setText(start_cam)
+
         # self.__stop_cam()
 
     def __print(self) -> None:
