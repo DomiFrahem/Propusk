@@ -24,17 +24,17 @@ class USBCam:
     _image_capture: QImageCapture
     _current_preview = QImage()
     _label: QLabel
-    
+
     def __init__(self, q_Video_Widget: QVideoWidget, name_cam: str) -> None:
         self._create_dirs()
         self._video_widget = q_Video_Widget
 
         self._camera_info = get_object_cam_by_name(name_cam)
         if not self._camera_info:
-            logger.error("Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
+            logger.error(
+                "Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
             raise IndexError(
                 "Не нашли камеру QMediaDevices.videoInputs(). убидитесь, что у вас есть камера")
-        
 
     def start_cam(self):
         self._camera = QCamera(self._camera_info)
@@ -44,7 +44,7 @@ class USBCam:
         self._image_capture.imageCaptured.connect(self.image_captured)
         self._image_capture.imageSaved.connect(self.image_saved)
         self._image_capture.errorOccurred.connect(self._capture_error)
-        
+
         self._capture_session = QMediaCaptureSession()
         self._capture_session.setCamera(self._camera)
         self._capture_session.setImageCapture(self._image_capture)
@@ -70,7 +70,7 @@ class USBCam:
         self._file_name = create_filename()
         self._image_capture.captureToFile(self._file_name)
         logger.info(F"Создаем файл {self._file_name}")
-        
+
         return self._file_name
 
     @Slot(int, QImageCapture.Error, str)
@@ -91,11 +91,8 @@ class USBCam:
 
     @Slot(int, str)
     def image_saved(self, id, fileName):
-       load_image(self._label, fileName)
-       self.stop_cam()
-
-        
-
+        load_image(self._label, fileName)
+        self.stop_cam()
 
 
 def load_image(qlabel: QLabel, path_file: str) -> None:
@@ -112,6 +109,7 @@ def get_list_name_cam() -> list:
     return [x for x, _ in groupby(
         [x.description() for x in QMediaDevices.videoInputs()]
     )]
+
 
 def get_object_cam_by_name(name_cam: str) -> QMediaDevices:
     return [x for x in QMediaDevices.videoInputs() if x.description() == name_cam][0]

@@ -19,7 +19,6 @@ from .DialogAbout import DialogAbout
 from .DialogHistory import DialogHistory
 
 
-from time import sleep
 from datetime import datetime
 from logger import logger
 from pathlib import Path
@@ -49,7 +48,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.currentChanged.connect(
             self.change_tab
         )
-
 
     def __init_menu_action(self) -> None:
         self.action_open_history.triggered.connect(self.open_history)
@@ -108,8 +106,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__check_setting_cam()
         if self.tabWidget.currentIndex() == 1:
             self.__mode = 'video'
-            
-        
 
     def __check_setting_cam(self) -> None:
         try:
@@ -193,7 +189,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             widget.to_video()
             self.__create_wwc(widget, cam)
             self.btn_start_cam.setText(stop_cam)
-            
+
         else:
             self.__stop_cam()
             widget.to_image()
@@ -233,7 +229,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "date_from": self.date_from.dateTime().toString('dd.MM.yyyy hh:mm'),
             "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
             "face": self.__file_name_face,
-            "document": self.__file_name_face
+            "document": self.__file_name_document
         })
 
         render_text = TemplatePropusk(
@@ -284,13 +280,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.__wwc is not None:
             self.__stop_cam()
-        
-        
+
         self.stacked_document.to_image()
         self.stacked_face.to_image()
         load_image(self.stacked_document, os.environ.get('NO_MEDIA_IMAGE'))
         load_image(self.stacked_face, os.environ.get('NO_MEDIA_IMAGE'))
-            
+
         self.receiving_man.clear()
         self.purpose_visite.clear()
 
@@ -298,22 +293,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.__wwc is not None:
             self.__wwc.stop_cam()
             self.__wwc = None
-            
+
         self.btn_start_cam.setText(start_cam)
 
     def __create_widget_face_cam(self) -> None:
         self.gridLayout.removeWidget(self.stacked_face)
-            
+
         self.stacked_face = create_widget_stacked(
             name_object=u'stacked_face',
             obj=self.tab,
             layout=self.gridLayout,
             mode=self.__mode)
-        
+
         self.stacked_face.currentChanged.connect(
             self.__change_text_btn
         )
-    
+
     def __change_text_btn(self) -> None:
         if self.stacked_face.currentIndex() == 0:
             self.btn_start_cam.setText(stop_cam)
