@@ -9,14 +9,16 @@ __VERSION = "ver 0.3 beta"
 DEFAULT_PATH = os.path.join(appdirs.user_data_dir(), "propusk")
 DEFAULT_PATH_PHOTO = os.path.join(DEFAULT_PATH, "photo")
 
-os.environ['VERSION'] = __VERSION
+no_media = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'image', 'no_media_main.jpg')
+os.environ.update({
+    'VERSION': __VERSION,
+    'ABSOLUTE_PATH': os.path.dirname(os.path.abspath(__file__)),
+    'NO_MEDIA_IMAGE': no_media,
+    'INDEX_PHOTO': '0',
+    'INDEX_CAMERA': '1'
+})
 # os.environ['DEFAULT_PATH'] = DEFAULT_PATH
 # os.environ['PHOTO_DIR'] = DEFAULT_PATH_PHOTO
-os.environ['ABSOLUTE_PATH'] = os.path.dirname(os.path.abspath(__file__))
-os.environ['NO_MEDIA_IMAGE'] = os.path.join(os.environ.get('ABSOLUTE_PATH'),
-                                            'image', 'no_media_main.jpg')
-os.environ['INDEX_PHOTO'] = '0'
-os.environ['INDEX_CAMERA'] = '1'
 
 def load_variables():
     # Load variable from .env

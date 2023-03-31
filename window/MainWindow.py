@@ -35,6 +35,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.__wwc = None
         self.data_propusk = None
+        self.stacked_face = None
 
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
@@ -45,18 +46,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__check_setting_cam()
         self.__create_widget_face_cam()
 
-        self.stacked_document.currentChanged.connect(
-            self.__change_text_in_btn_start_cam
-        )
-
         self.tabWidget.currentChanged.connect(
             self.change_tab
         )
 
-    def __change_text_in_btn_start_cam(self):
-        match self.tabWidget.currentIndex():
-            case 0: self.btn_start_cam.setText(start_cam)
-            case 1: self.btn_start_cam.setText(stop_cam)
 
     def __init_menu_action(self) -> None:
         self.action_open_history.triggered.connect(self.open_history)
@@ -102,6 +95,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__update_list_combobox()
 
     def __show_setting_cam_window(self) -> None:
+        self.__stop_cam()
         SettingCam(self).exec_()
         self.__check_setting_cam()
         self.__create_widget_face_cam()
@@ -110,9 +104,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         DialogHistory(self).exec_()
 
     def change_tab(self) -> None:
+        self.__stop_cam()
         self.__check_setting_cam()
         if self.tabWidget.currentIndex() == 1:
             self.__mode = 'video'
+            
+        
 
     def __check_setting_cam(self) -> None:
         try:
@@ -195,9 +192,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.__wwc is None:
             widget.to_video()
             self.__create_wwc(widget, cam)
+            self.btn_start_cam.setText(stop_cam)
+            
         else:
             self.__stop_cam()
             widget.to_image()
+            self.btn_start_cam.setText(start_cam)
 
     def __create_wwc(self, widget: PStackedWidget, cam: str) -> None:
         if self.__mode in 'snapshot':
@@ -215,11 +215,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.stacked_document.image)
             sleep(1)
             load_image(self.stacked_document.image, self.__file_name_document)
+            self.stacked_document.to_image()
         else:
             self.__file_name_face = self.__wwc.cupture_image(
                 self.stacked_face.image)
             sleep(1)
             load_image(self.stacked_face.image, self.__file_name_face)
+            self.stacked_face.to_image()
 
         self.__stop_cam()
 
@@ -286,7 +288,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.__wwc is not None:
             self.__stop_cam()
-
+        
+        
+        self.stacked_document.to_image()
+        self.stacked_face.to_image()
+        load_image(self.stacked_document, os.environ.get('NO_MEDIA_IMAGE'))
+        load_image(self.stacked_face, os.environ.get('NO_MEDIA_IMAGE'))
+            
         self.receiving_man.clear()
         self.purpose_visite.clear()
 
@@ -294,21 +302,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.__wwc is not None:
             self.__wwc.stop_cam()
             self.__wwc = None
-
-        if self.tabWidget.currentIndex() == 1:
-            self.stacked_document.to_image()
-        else:
-            self.stacked_face.to_image()
+            
+        self.btn_start_cam.setText(start_cam)
 
     def __create_widget_face_cam(self) -> None:
-        if hasattr(self, 'stacked_face'):
-            self.gridLayout.removeWidget(self.stacked_face)
+        self.gridLayout.removeWidget(self.stacked_face)
+            
         self.stacked_face = create_widget_stacked(
             name_object=u'stacked_face',
             obj=self.tab,
             layout=self.gridLayout,
             mode=self.__mode)
-
-        self.stacked_face.currentChanged.connect(
-            self.__change_text_in_btn_start_cam
-        )
