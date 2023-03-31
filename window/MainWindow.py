@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication
 from PySide6.QtCore import QDate, QDateTime
+from sqlalchemy.exc import OperationalError
 
 from module.WorkWithDB import *
 from module.MyMessageBox import show_dialog
@@ -7,7 +8,6 @@ from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.cam import IPCam, USBCam, load_image
-
 
 from widgets import PStackedWidget, create_widget_stacked
 
@@ -30,12 +30,12 @@ vecrot_cam_from_db = [str, str, str]
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None) -> None:
-        
+
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.__wwc = None
         self.data_propusk = None
-        self._parent=parent
+
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
 
@@ -131,8 +131,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except TypeError:
             logger.warning(warring_cams.get("title"))
 
-        
-
     def __update_list_combobox(self) -> None:
         self.__load_personal()
         self.__load_place()
@@ -213,14 +211,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def __take_image_face(self) -> None:
         if self.tabWidget.currentIndex() == 1:
-            self.__file_name_document = self.__wwc.cupture_image(self.stacked_document.image)
+            self.__file_name_document = self.__wwc.cupture_image(
+                self.stacked_document.image)
             sleep(1)
             load_image(self.stacked_document.image, self.__file_name_document)
         else:
-            self.__file_name_face = self.__wwc.cupture_image(self.stacked_face.image)
+            self.__file_name_face = self.__wwc.cupture_image(
+                self.stacked_face.image)
             sleep(1)
             load_image(self.stacked_face.image, self.__file_name_face)
-            
+
         self.__stop_cam()
 
     def __print(self) -> None:
@@ -228,14 +228,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__save()
 
         propusk_data = self.data_propusk.copy()
-        
+
         propusk_data.update({
             "personal": self.personal_combobox.currentText(),
             "place": self.place_combobox.currentText(),
             "date_from": self.date_from.dateTime().toString('dd.MM.yyyy hh:mm'),
             "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
             "face": self.__file_name_face,
-            "document": self.__file_name_face        
+            "document": self.__file_name_face
         })
 
         render_text = TemplatePropusk(
@@ -268,9 +268,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         }
 
         with connect() as conn:
-            conn.execute(
-                list_propusk.insert().values(**self.data_propusk)
-            )
+            try:
+                conn.execute(
+                    list_propusk.insert().values(**self.data_propusk)
+                )
+
+                show_dialog(QMessageBox.Icon.Information, '', 'Сохранено')
+            except OperationalError as er:
+                logger.error(er)
+                show_dialog(QMessageBox.Icon.Critical, 'Ошибка',
+                            'Произошла ошибка при сохранении! \n Обратитесь к администратору')
 
     def __set_default_data(self) -> None:
         self.number_propusk.clear()
@@ -279,7 +286,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.__wwc is not None:
             self.__stop_cam()
-            
+
         self.receiving_man.clear()
         self.purpose_visite.clear()
 
@@ -290,7 +297,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.tabWidget.currentIndex() == 1:
             self.stacked_document.to_image()
-        else: self.stacked_face.to_image()
+        else:
+            self.stacked_face.to_image()
 
     def __create_widget_face_cam(self) -> None:
         if hasattr(self, 'stacked_face'):
@@ -300,8 +308,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj=self.tab,
             layout=self.gridLayout,
             mode=self.__mode)
-        
+
         self.stacked_face.currentChanged.connect(
             self.__change_text_in_btn_start_cam
         )
-        

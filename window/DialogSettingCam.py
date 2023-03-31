@@ -1,6 +1,7 @@
 from .ui_py.ui_DialogSettingCam import Ui_DialogSettingCam
 from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import Qt, Slot
+from sqlalchemy.exc import OperationalError
 
 from module.WorkWithDB import *
 from widgets import create_widget_cam_shecked
@@ -27,6 +28,8 @@ class SettingCam(QDialog, Ui_DialogSettingCam):
     def __change_type(self) -> None:
         if self.tabWidget.currentIndex() == 1:
             self.__mode = 'document'
+        # else:
+        #     self.__mode = 'video'     
 
         self.__load_cams_from_db()
 
@@ -63,6 +66,7 @@ class SettingCam(QDialog, Ui_DialogSettingCam):
                 cam_setting.c.type == self.tabWidget.currentIndex()
             )).fetchone()
             if result:
+                print(result)
                 self.__mode = result.mode
                 self.__recreate_widget(self.__mode)
                 match self.__mode:
@@ -82,16 +86,22 @@ class SettingCam(QDialog, Ui_DialogSettingCam):
     def __save_cams(self) -> None:
         query = None
         with connect() as conn:
-            result = conn.execute(cam_setting.select().where(
-                cam_setting.c.type == self.tabWidget.currentIndex()
-            )).fetchone()
-            if result is None:
-                query = cam_setting.insert().values(
-                    type=self.tabWidget.currentIndex(),
-                    mode=self.__mode,
-                    selected_cam=self.widget.get_value())
-            else:
-                query = cam_setting.update().where(
+            try:
+                result = conn.execute(cam_setting.select().where(
                     cam_setting.c.type == self.tabWidget.currentIndex()
-                ).values(mode=self.__mode, selected_cam=self.widget.get_value())
-            result = conn.execute(query)
+                )).fetchone()
+                if result is None:
+                    query = cam_setting.insert().values(
+                        type=self.tabWidget.currentIndex(),
+                        mode=self.__mode,
+                        selected_cam=self.widget.get_value())
+                else:
+                    query = cam_setting.update().where(
+                        cam_setting.c.type == self.tabWidget.currentIndex()
+                    ).values(mode=self.__mode, selected_cam=self.widget.get_value())
+                result = conn.execute(query)
+                show_dialog(QMessageBox.Icon.Information, '', 'Сохранено')
+                logger.info('Камера сохранена')
+            except OperationalError as er:
+                logger.error(er)
+                show_dialog(QMessageBox.Icon.Critical, 'Ошибка', 'Произошла ошибка! \nОбратитеcь к администратору')

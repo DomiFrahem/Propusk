@@ -4,7 +4,7 @@ from .PCamChecked import *
 
 
 
-def create_widget_cam_shecked(obj, layout, name_object: str, mode: str = 'video', ) -> PCamChecked:
+def create_widget_cam_shecked(obj, layout, name_object: str, mode: str = 'video') -> PCamChecked:
     widget = PCamChecked(obj, mode=mode)
     widget.setObjectName(name_object)
     layout.addWidget(widget)

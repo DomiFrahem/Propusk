@@ -9,16 +9,17 @@ class PCamChecked(QWidget):
         super().__init__(parent)
 
         self.__mode = mode
+        
         self.vLayout = QVBoxLayout(self)
         self.vLayout.setObjectName(u'vLayout')
 
-        match self.__mode:
-            case 'video':
-                self.line_cam = QComboBox(self)
-                # load list cam
-                [self.line_cam.addItem(x) for x in get_list_name_cam()]
-            case 'snapshot': self.line_cam = QLineEdit(self)
-
+        if self.__mode in 'snapshot':
+            self.line_cam = QLineEdit(self)
+        else:
+            self.line_cam = QComboBox(self)
+            # load list cam
+            [self.line_cam.addItem(x) for x in get_list_name_cam()]
+        
         self.line_cam.setObjectName(u"line_cam")
         self.vLayout.addWidget(self.line_cam)
 
