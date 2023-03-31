@@ -309,3 +309,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             obj=self.tab,
             layout=self.gridLayout,
             mode=self.__mode)
+        
+        self.stacked_face.currentChanged.connect(
+            self.__change_text_btn
+        )
+    
+    def __change_text_btn(self) -> None:
+        if self.stacked_face.currentIndex() == 0:
+            self.btn_start_cam.setText(stop_cam)
+        else:
+            self.btn_start_cam.setText(start_cam)
