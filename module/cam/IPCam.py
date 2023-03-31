@@ -74,4 +74,5 @@ class IPCam(Thread):
         name_file = create_filename()
         qLabel.setPixmap(self.__scaled_img)
         self.__scaled_img.save(name_file, 'jpg')
+        self.stop_cam()
         return name_file

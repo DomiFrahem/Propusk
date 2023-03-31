@@ -76,7 +76,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         self.capturePhoto.clicked.connect(
-            self.__take_image_face
+            self.__take_image
         )
 
         self.btn_save.clicked.connect(self.__save)
@@ -209,21 +209,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__wwc = USBCam(widget.video, cam)
             self.__wwc.start_cam()
 
-    def __take_image_face(self) -> None:
+    def __take_image(self) -> None:
         if self.tabWidget.currentIndex() == 1:
             self.__file_name_document = self.__wwc.cupture_image(
                 self.stacked_document.image)
-            sleep(1)
-            load_image(self.stacked_document.image, self.__file_name_document)
             self.stacked_document.to_image()
         else:
             self.__file_name_face = self.__wwc.cupture_image(
                 self.stacked_face.image)
-            sleep(1)
-            load_image(self.stacked_face.image, self.__file_name_face)
             self.stacked_face.to_image()
 
-        self.__stop_cam()
+        # self.__stop_cam()
 
     def __print(self) -> None:
         if self.data_propusk is None:

@@ -18,13 +18,15 @@ if not os.environ.get("PHOTO_DIR"):
 
 
 class USBCam:
+    _capture_session: QMediaCaptureSession
+    _camera: QCamera
+    _camera_info: list[QMediaDevices]
+    _image_capture: QImageCapture
+    _current_preview = QImage()
+    _label: QLabel
+    
     def __init__(self, q_Video_Widget: QVideoWidget, name_cam: str) -> None:
         self._create_dirs()
-
-        self._capture_session = None
-        self._camera = None
-        self._camera_info = None
-        self._image_capture = None
         self._video_widget = q_Video_Widget
 
         self._camera_info = get_object_cam_by_name(name_cam)
@@ -51,22 +53,24 @@ class USBCam:
             self._capture_session.setVideoOutput(self._video_widget)
             self._camera.start()
         else:
-            logger.debug("Camera unavailable")
+            logger.error("Camera unavailable")
 
     def stop_cam(self) -> None:
-        if self._camera and self._camera.isActive():
-            self._camera.stop()
+        try:
+            if self._camera and self._camera.isActive():
+                self._camera.stop()
+        except RuntimeError as err:
+            logger.error(err)
 
     def __del__(self) -> None:
         self.stop_cam()
 
     def cupture_image(self, label: QLabel) -> str:
         self._label = label
-        self._current_preview = QImage()
         self._file_name = create_filename()
-
-        logger.info(F"Создаем файл {self._file_name}")
         self._image_capture.captureToFile(self._file_name)
+        logger.info(F"Создаем файл {self._file_name}")
+        
         return self._file_name
 
     @Slot(int, QImageCapture.Error, str)
@@ -87,7 +91,10 @@ class USBCam:
 
     @Slot(int, str)
     def image_saved(self, id, fileName):
-        load_image(self._label, fileName)
+       load_image(self._label, fileName)
+       self.stop_cam()
+
+        
 
 
 
