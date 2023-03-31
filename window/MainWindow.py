@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication
 from PySide6.QtCore import QDate, QDateTime
 
 from module.WorkWithDB import *
@@ -7,6 +7,7 @@ from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.cam import IPCam, USBCam, load_image
+
 
 from widgets import PStackedWidget, create_widget_stacked
 
@@ -22,18 +23,19 @@ from time import sleep
 from datetime import datetime
 from logger import logger
 from pathlib import Path
-
+import sys
 
 vecrot_cam_from_db = [str, str, str]
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None) -> None:
+        
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.__wwc = None
         self.data_propusk = None
-
+        self._parent=parent
         self.date_from.setDateTime(QDateTime().currentDateTime())
         self.date_to.setDateTime(QDateTime().currentDateTime())
 
@@ -126,6 +128,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.__check_setting_cam()
             else:
                 self.close()
+        except TypeError:
+            logger.warning(warring_cams.get("title"))
+
+        
 
     def __update_list_combobox(self) -> None:
         self.__load_personal()
@@ -172,11 +178,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return cam[0].mode, cam[0].selected_cam, cam[1].selected_cam
             except:
                 logger.error('Нет записи о камерах')
-                show_dialog(
+                if show_dialog(
                     QMessageBox.Icon.Critical,
-                    'Отсутствуют записи о камерах',
+                    'Камера',
                     'Отсутствуют записи о камерах'
-                )
+                ):
+                    self.__show_setting_cam_window()
+                    self.__check_setting_cam()
+                else:
+                    sys.exit(0)
 
     def __press_btn_start_cam(self):
         match self.tabWidget.currentIndex():

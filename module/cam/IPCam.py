@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QLabel
 from PySide6.QtCore import Qt
 from threading import Thread
 from PySide6.QtGui import QImage, QPixmap
-from PySide6.QtWidgets import QMessageBox
 import cv2
 from module.ImageTool import create_filename
 from logger import logger
@@ -68,7 +67,7 @@ class IPCam(Thread):
         logger.info("stop take image from ip cam")
         self.cap.release()
         self.status = False
-        # cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
         self.join()
 
     def cupture_image(self, qLabel: QLabel) -> str:
