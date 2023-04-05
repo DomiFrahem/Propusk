@@ -8,7 +8,8 @@ from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.cam import IPCam, USBCam, load_image
-from module import QRCode, create_path_qr
+import module.QRCode
+from module import create_path_qr
 # from module.ImageTool import cupture_face
 
 from widgets import PStackedWidget, create_widget_stacked
