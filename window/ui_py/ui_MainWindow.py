@@ -8,16 +8,23 @@
 # WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime,
-                            QMetaObject, QRect, QSize, QTime, Qt)
-from PySide6.QtGui import (QAction)
-from PySide6.QtWidgets import (QComboBox, QDateTimeEdit,
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+                           QCursor, QFont, QFontDatabase, QGradient,
+                           QIcon, QImage, QKeySequence, QLinearGradient,
+                           QPainter, QPalette, QPixmap, QRadialGradient,
+                           QTransform)
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtWidgets import (QApplication, QComboBox, QDateTimeEdit, QFrame,
                                QGridLayout, QGroupBox, QHBoxLayout, QLabel,
-                               QMenu, QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
+                               QLayout, QLineEdit, QMainWindow, QMenu,
+                               QMenuBar, QPushButton, QSizePolicy, QStackedWidget,
                                QStatusBar, QTabWidget, QTextEdit, QVBoxLayout,
                                QWidget)
 
-from widgets import PStackedWidget, PLineEdit
+from widgets import PLineEdit, PStackedWidget
 
 
 class Ui_MainWindow(object):
@@ -59,26 +66,29 @@ class Ui_MainWindow(object):
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setEnabled(True)
-        sizePolicy.setHeightForWidth(
+        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(
             self.centralwidget.sizePolicy().hasHeightForWidth())
-        self.centralwidget.setSizePolicy(sizePolicy)
+        self.centralwidget.setSizePolicy(sizePolicy1)
         self.centralwidget.setFocusPolicy(Qt.NoFocus)
         self.centralwidget.setAutoFillBackground(False)
-        self.verticalLayout_9 = QVBoxLayout(self.centralwidget)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.verticalLayout_6 = QVBoxLayout()
+        self.verticalLayout_6 = QVBoxLayout(self.centralwidget)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.horizontalLayout_11 = QHBoxLayout()
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.horizontalLayout_7 = QHBoxLayout()
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.groupBox = QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setMinimumSize(QSize(400, 0))
+        self.groupBox.setMaximumWidth(600)
+
         self.verticalLayout_3 = QVBoxLayout(self.groupBox)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setSizeConstraint(QLayout.SetFixedSize)
         self.label = QLabel(self.groupBox)
         self.label.setObjectName(u"label")
         sizePolicy.setHeightForWidth(
@@ -95,6 +105,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.label_2 = QLabel(self.groupBox)
         self.label_2.setObjectName(u"label_2")
@@ -103,8 +114,7 @@ class Ui_MainWindow(object):
 
         self.date_from = QDateTimeEdit(self.groupBox)
         self.date_from.setObjectName(u"date_from")
-        self.date_from.setDateTime(
-            QDateTime(QDate(1999, 12, 31), QTime(18, 0, 0)))
+        # self.date_from.setDateTime(QDateTime(QDate(1999, 12, 31), QTime(9, 0, 0)))
         self.date_from.setTimeSpec(Qt.UTC)
 
         self.horizontalLayout_2.addWidget(self.date_from)
@@ -181,9 +191,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
 
-        self.horizontalLayout_7.addWidget(self.groupBox)
-
-        self.horizontalLayout_11.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout_7.addWidget(self.groupBox, alignment=Qt.AlignTop)
 
         self.verticalLayout_5 = QVBoxLayout()
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
@@ -191,23 +199,18 @@ class Ui_MainWindow(object):
         self.tabWidget.setObjectName(u"tabWidget")
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
-
         self.gridLayout = QGridLayout(self.tab)
         self.gridLayout.setObjectName(u"gridLayout")
-
-        
 
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
-
         self.gridLayout_2 = QGridLayout(self.tab_2)
         self.gridLayout_2.setObjectName(u"gridLayout")
 
         self.stacked_document = PStackedWidget(self.tab_2)
         self.stacked_document.setObjectName(u'stacked_document')
         self.gridLayout_2.addWidget(self.stacked_document, 0, 0, 1, 1)
-
         self.tabWidget.addTab(self.tab_2, "")
 
         self.verticalLayout_5.addWidget(self.tabWidget)
@@ -226,14 +229,9 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_6)
 
-        self.horizontalLayout_11.addLayout(self.verticalLayout_5)
+        self.horizontalLayout_7.addLayout(self.verticalLayout_5)
 
-        self.verticalLayout_6.addLayout(self.horizontalLayout_11)
-
-        self.verticalSpacer = QSpacerItem(
-            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout_6.addItem(self.verticalSpacer)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_7)
 
         self.horizontalLayout_8 = QHBoxLayout()
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
@@ -242,6 +240,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.btn_clear.sizePolicy().hasHeightForWidth())
         self.btn_clear.setSizePolicy(sizePolicy)
+        self.btn_clear.setMaximumSize(QSize(16777215, 25))
 
         self.horizontalLayout_8.addWidget(self.btn_clear)
 
@@ -250,6 +249,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.btn_save.sizePolicy().hasHeightForWidth())
         self.btn_save.setSizePolicy(sizePolicy)
+        self.btn_save.setMaximumSize(QSize(16777215, 25))
 
         self.horizontalLayout_8.addWidget(self.btn_save)
 
@@ -258,12 +258,11 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.btn_print.sizePolicy().hasHeightForWidth())
         self.btn_print.setSizePolicy(sizePolicy)
+        self.btn_print.setMaximumSize(QSize(16777215, 25))
 
         self.horizontalLayout_8.addWidget(self.btn_print)
 
         self.verticalLayout_6.addLayout(self.horizontalLayout_8)
-
-        self.verticalLayout_9.addLayout(self.verticalLayout_6)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -306,17 +305,12 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
-
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate(
             "MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a", None))
-        
-        # self.number_propusk.__create_id()
-        
         self.actionExit.setText(
             QCoreApplication.translate("MainWindow", u"Exit", None))
         self.actionSave.setText(
@@ -343,6 +337,7 @@ class Ui_MainWindow(object):
             "MainWindow", u"\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f:", None))
         self.label.setText(QCoreApplication.translate(
             "MainWindow", u"\u0412\u0440\u0435\u043c\u0435\u043d\u043d\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a \u2116:", None))
+
         self.label_2.setText(QCoreApplication.translate(
             "MainWindow", u"\u0414\u0430\u0442\u0430 \u0438 \u0432\u0440\u0435\u043c\u044f \u0432\u044b\u0434\u0430\u0447\u0438:", None))
         self.label_4.setText(QCoreApplication.translate(
@@ -355,6 +350,7 @@ class Ui_MainWindow(object):
             "MainWindow", u"\u041f\u0440\u0438\u043d\u0438\u043c\u0430\u044e\u0449\u0438\u0439:", None))
         self.label_7.setText(QCoreApplication.translate(
             "MainWindow", u"\u0426\u0435\u043b\u044c \u0432\u0438\u0437\u0438\u0442\u0430:", None))
+
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate(
             "MainWindow", u"\u041A\u0430\u043C\u0435\u0440\u0430 \u0434\u043B\u044F \u043B\u0438\u0446\u0430", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate(

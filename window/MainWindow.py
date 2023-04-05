@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QMessageBox, QApplication
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 from PySide6.QtCore import QDate, QDateTime
 from sqlalchemy.exc import OperationalError
 
@@ -8,6 +8,8 @@ from module.TemplatePropusk import TemplatePropusk
 from module.Printer import Printer
 from module.lang.ru import *
 from module.cam import IPCam, USBCam, load_image
+from module import QRCode, create_path_qr
+# from module.ImageTool import cupture_face
 
 from widgets import PStackedWidget, create_widget_stacked
 
@@ -214,6 +216,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__file_name_face = self.__wwc.cupture_image(
                 self.stacked_face.image)
             self.stacked_face.to_image()
+            
 
         self.btn_start_cam.setText(start_cam)
 
@@ -223,15 +226,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.data_propusk is None:
             self.__save()
 
-        propusk_data = self.data_propusk.copy()
 
+        propusk_data = self.data_propusk.copy()
+        
         propusk_data.update({
             "personal": self.personal_combobox.currentText(),
             "place": self.place_combobox.currentText(),
             "date_from": self.date_from.dateTime().toString('dd.MM.yyyy hh:mm'),
             "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
             "face": self.__file_name_face,
-            "document": self.__file_name_document
+            "document": self.__file_name_document,
+            "qrcode": QRCode.make(propusk_data.get("id_propusk"), create_path_qr())
         })
 
         render_text = TemplatePropusk(
