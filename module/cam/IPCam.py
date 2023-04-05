@@ -44,9 +44,14 @@ class IPCam(Thread):
 
                 color_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                h, w, ch = color_frame.shape
+                _, _, ch = color_frame.shape
+                
+                label_geometry = self.qLabel.geometry()
+                h, w = label_geometry.height(), label_geometry.width()
+                
                 img = QImage(color_frame.data, w, h,
                              ch * w, QImage.Format_RGB888)
+                
                 self.__scaled_img = QPixmap.fromImage(
                     img.scaled(h, w, Qt.KeepAspectRatio))
 
