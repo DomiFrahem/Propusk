@@ -3,7 +3,8 @@ from PySide6.QtCore import Qt
 from threading import Thread
 from PySide6.QtGui import QImage, QPixmap
 import cv2
-from module.ImageTool import create_filename
+from module import create_filename
+from module.ImageTool import cupture_face
 from logger import logger
 
 
@@ -75,4 +76,5 @@ class IPCam(Thread):
         qLabel.setPixmap(self.__scaled_img)
         self.__scaled_img.save(name_file, 'jpg')
         self.stop_cam()
+        cupture_face(name_file, F"face_{create_filename()}")
         return name_file

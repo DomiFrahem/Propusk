@@ -8,7 +8,8 @@ from PySide6.QtMultimedia import (
     QMediaDevices, QCamera, QImageCapture, QMediaCaptureSession)
 from itertools import groupby
 from logger import logger
-from module.ImageTool import create_filename
+from module import create_filename
+from module.ImageTool import cupture_face
 
 if not os.environ.get("PHOTO_DIR"):
     logger.error("Не задана локальная переменная PHOTO_DIR")
@@ -93,6 +94,7 @@ class USBCam:
     def image_saved(self, id, fileName):
         load_image(self._label, fileName)
         self.stop_cam()
+        cupture_face(fileName, F"face_{create_filename()}")
 
 
 def load_image(qlabel: QLabel, path_file: str) -> None:

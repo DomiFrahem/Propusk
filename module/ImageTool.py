@@ -27,7 +27,7 @@ def rotate_image(path_file: str, gradus: int = -90) -> str:
 
 
 
-def cupture_face(path_photo) -> None:
+def cupture_face(path_photo: str, new_path: str) -> None:
     img = cv2.imread(path_photo)
     face_recog = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     face_result = face_recog.detectMultiScale(img, scaleFactor=2, minNeighbors=3)
@@ -37,7 +37,7 @@ def cupture_face(path_photo) -> None:
         x,y,w,h = face_result[-1]
         
         img = img[y-50:y+h+80,x-50:x+50+w]
-        cv2.imwrite(F"propusk_{datetime.now().timestamp()}.jpg", img)
+        cv2.imwrite(new_path, img)
             
         # cv2.imshow("Result", img)
         #Этот метод выводит результат на экран. Первый аргумент - что то по типу комментария к картинке, второй - сама картинка

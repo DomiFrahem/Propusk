@@ -9,7 +9,10 @@ from logger import logger
 
 meta = MetaData()
 
+# /home/asidorov/Документы/propusk_db
+
 FILE_NAME = None
+
 if os.environ.get("DB_DIR"):
     FILE_NAME = os.path.join(os.environ.get("DB_DIR"), "propusk.db")
 else:
@@ -65,6 +68,12 @@ list_propusk = Table("list_propusk", meta,
                      Column("update", DateTime, default=func.now(),
                             onupdate=func.current_timestamp()))
 
+list_ussued_passes = Table("list_ussued_passes", meta,
+                           Column("id", Integer, primary_key=True),
+                           Column("used_pass", Integer, nullable=False),
+                           Column("id_propusk", Integer, ForeignKey("list_propusk.id_propusk"), nullable=False),
+                           Column("created", DateTime, default=func.now()),
+                           Column("update", DateTime, default=func.now(), onupdate=func.current_timestamp()))
 
 engine = create_engine(F"sqlite:///{FILE_NAME}", echo=False)
 engine.logging_name = 'PropuskLogger'
