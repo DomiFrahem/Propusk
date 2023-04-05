@@ -11,7 +11,7 @@ DEFAULT_PATH_PHOTO = os.path.join(DEFAULT_PATH, "photo")
 no_media = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'image', 'no_media_main.jpg')
 
 os.environ.update({
-    'VERSION': "ver 0.4 beta",
+    'VERSION': "ver 0.5 beta",
     'ABSOLUTE_PATH': os.path.dirname(os.path.abspath(__file__)),
     'NO_MEDIA_IMAGE': no_media,
     'INDEX_PHOTO': '0',
