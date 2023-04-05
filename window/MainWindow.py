@@ -236,7 +236,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
             "face": self.__file_name_face,
             "document": self.__file_name_document,
-            "qrcode": QRCode.make(propusk_data.get("id_propusk"), create_path_qr())
+            # "qrcode": QRCode.make(propusk_data.get("id_propusk"), create_path_qr())
         })
 
         render_text = TemplatePropusk(
