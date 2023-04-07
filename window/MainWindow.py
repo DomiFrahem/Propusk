@@ -1,29 +1,28 @@
-from PySide6.QtWidgets import QMainWindow, QMessageBox
+import sys
+from datetime import datetime
+from pathlib import Path
+
 from PySide6.QtCore import QDate, QDateTime
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 from sqlalchemy.exc import OperationalError
 
-from module.WorkWithDB import *
-from module.MyMessageBox import show_dialog
-from module.TemplatePropusk import TemplatePropusk
-from module.Printer import Print
-from module.lang.ru import *
-from module.cam import IPCam, USBCam, load_image
+from logger import logger
 from module import create_filename
+from module.cam import IPCam, USBCam, load_image
+from module.lang.ru import *
+from module.MyMessageBox import show_dialog
+from module.Printer import Print
 from module.QRCode import make as make_qr
-
+from module.TemplatePropusk import TemplatePropusk
+from module.WorkWithDB import *
 from widgets import PStackedWidget, create_widget_stacked
 
-from .ui_py.ui_MainWindow import Ui_MainWindow
-from .ListPersonal import ListPersonal
-from .ListPlace import ListPlace
-from .DialogSettingCam import SettingCam
 from .DialogAbout import DialogAbout
 from .DialogHistory import DialogHistory
-
-from datetime import datetime
-from logger import logger
-from pathlib import Path
-import sys
+from .DialogSettingCam import SettingCam
+from .ListPersonal import ListPersonal
+from .ListPlace import ListPlace
+from .ui_py.ui_MainWindow import Ui_MainWindow
 
 vecrot_cam_from_db = [str, str, str]
 
