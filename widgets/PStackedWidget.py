@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QStackedWidget, QWidget, QLabel, QGridLayout
-from PySide6.QtGui import QResizeEvent, QPixmap
+from PySide6.QtGui import QResizeEvent, QPixmap, QImage
 from PySide6.QtCore import QSize
 from PySide6.QtMultimediaWidgets import QVideoWidget
 from module.cam.USBCam import load_image
@@ -20,18 +20,15 @@ class PStackedWidget(QStackedWidget):
     def __resize(self, event: QResizeEvent) -> None:
         self.image.resize(event.size())
         self.video.resize(event.size())
-        img = self.image.pixmap().toImage().scaled(
-            event.size().width()-20,
-            event.size().height()-20
-        )
-        self.image.setPixmap(QPixmap.fromImage(img))
         
-        if self.video.__class__.__name__ in 'QLabel':
-            img = self.video.pixmap().toImage().scaled(
-                event.size().width()-20,
-                event.size().height()-20
-            )
-            self.video.setPixmap(QPixmap.fromImage(img))
+        self.image.setPixmap(QPixmap.fromImage(
+            self.__scaled_image(self.image, event)                                       
+        ))
+        
+        if self.__mode not in 'video':
+            self.video.setPixmap(QPixmap.fromImage(
+                self.__scaled_image(self.video, event)
+            ))
         
         # print(type(self.video))
 
@@ -74,8 +71,8 @@ class PStackedWidget(QStackedWidget):
     def to_video(self) -> None:
         self.setCurrentIndex(1)
 
-    # def cupture_image(self) -> None:
-    #     if self.__mode == 'video':
-    #         self.video = self.video.cupture_image(self.image)
-    #     else:
-    #         self.video = self.video.cupture_image(self.image)
+    def __scaled_image(self, label: QLabel, event: QResizeEvent) -> QImage:
+        return label.pixmap().toImage().scaled(
+            event.size().width()-20,
+            event.size().height()-20
+        ) 

@@ -1,13 +1,21 @@
-from PySide6.QtWidgets import QDialog
-from PySide6.QtCore import Slot
-from .ui_py.ui_DialogHistory import Ui_DialogHistory
-from module.WorkWithDB import connect, list_propusk, list_personal, list_place
-from sqlalchemy import select, func
-from module.ModelPropusk import PropuskDataMethods
-from module.TemplatePropusk import TemplatePropusk
 import os
-from module.ImageTool import rotate_image
+
+# from module.ImageTool import rotate_image
+from pdf2image import convert_from_path
+from PySide6.QtCore import Slot
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QDialog
+from sqlalchemy import func, select
+
 from logger import logger
+from module import create_filename
+from module.ModelPropusk import PropuskDataMethods
+from module.Printer import CreatorPDF
+from module.QRCode import make
+from module.TemplatePropusk import TemplatePropusk
+from module.WorkWithDB import connect, list_personal, list_place, list_propusk
+
+from .ui_py.ui_DialogHistory import Ui_DialogHistory
 
 
 class DialogHistory(Ui_DialogHistory, QDialog):
@@ -44,7 +52,7 @@ class DialogHistory(Ui_DialogHistory, QDialog):
             else:
                 item.setHidden(False)
 
-    def match_text(self, text, keywords) -> None:
+    def match_text(self, text: str, keywords:str) -> bool:
         return text in keywords
 
     def load_data(self) -> None:
@@ -81,14 +89,22 @@ class DialogHistory(Ui_DialogHistory, QDialog):
             ).fetchone()
 
             pdm = PropuskDataMethods(*row)
-            face = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("face"))
-            documet = os.path.join(os.environ.get('PHOTO_DIR'), pdm.get_value("document"))
+            face = os.path.join(os.environ.get(
+                'PHOTO_DIR'), pdm.get_value("face"))
+            documet = os.path.join(os.environ.get(
+                'PHOTO_DIR'), pdm.get_value("document"))
             pdm.set_value("face", face)
             pdm.set_value("document", documet)
+            pdm.set_value("qrcode", make(pdm.get_value('id_propusk'), create_filename('qr')))
+
+            path_doc = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'docs')
+            render_text = str(TemplatePropusk(pdm._propusk_data.__dict__, path_doc))
+            # print(render_text)
             
+            # Print(render_text)
+            pdf = CreatorPDF(render_text)
+            image  = convert_from_path(pdf.get_path_to_pdf())[0]
+            image_path = create_filename()
+            QPixmap.fromImage(image.toqimage()).save(image_path, 'jpg')
             
-            render_text = str(TemplatePropusk(pdm._propusk_data.__dict__,
-                                              os.path.join(os.path.dirname(
-                                                  os.path.abspath(__package__)), 'docs')
-                                              ))
-            self.browser.setText(render_text)
+            self.browser.setText(F"<img src='file:{image_path}'>")

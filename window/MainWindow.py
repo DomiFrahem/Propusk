@@ -5,12 +5,11 @@ from sqlalchemy.exc import OperationalError
 from module.WorkWithDB import *
 from module.MyMessageBox import show_dialog
 from module.TemplatePropusk import TemplatePropusk
-from module.Printer import Printer
+from module.Printer import Print
 from module.lang.ru import *
 from module.cam import IPCam, USBCam, load_image
-import module.QRCode
-from module import create_path_qr
-# from module.ImageTool import cupture_face
+from module import create_filename
+from module.QRCode import make as make_qr
 
 from widgets import PStackedWidget, create_widget_stacked
 
@@ -20,7 +19,6 @@ from .ListPlace import ListPlace
 from .DialogSettingCam import SettingCam
 from .DialogAbout import DialogAbout
 from .DialogHistory import DialogHistory
-
 
 from datetime import datetime
 from logger import logger
@@ -217,7 +215,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.__file_name_face = self.__wwc.cupture_image(
                 self.stacked_face.image)
             self.stacked_face.to_image()
-            
 
         self.btn_start_cam.setText(start_cam)
 
@@ -227,9 +224,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.data_propusk is None:
             self.__save()
 
-
         propusk_data = self.data_propusk.copy()
-        
+
+
         propusk_data.update({
             "personal": self.personal_combobox.currentText(),
             "place": self.place_combobox.currentText(),
@@ -237,7 +234,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "date_to": self.date_to.dateTime().toString('dd.MM.yyyy hh:mm'),
             "face": self.__file_name_face,
             "document": self.__file_name_document,
-            # "qrcode": QRCode.make(propusk_data.get("id_propusk"), create_path_qr())
+            "qrcode": make_qr(propusk_data.get("id_propusk"), create_filename('qr')),
+            "count_repeat": 2
         })
 
         render_text = TemplatePropusk(
@@ -245,7 +243,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             os.path.join(os.environ.get('ABSOLUTE_PATH'), 'docs')
         )
 
-        Printer(str(render_text)).print()
+        Print(str(render_text))
 
     def __clear(self) -> None:
         if self.data_propusk is not None:

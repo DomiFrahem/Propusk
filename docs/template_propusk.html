@@ -5,63 +5,58 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{{ id_propusk }}</title>
 </head>
 
 <body style="padding: 0; margin: 0; font-size: 12pt">
     {% for _ in range(2) %}
-    <table >
+    <table>
         <tbody>
             <tr>
-                <td><b>Временный пропуск №:</b> {{ id_propusk }}</td>
-                <td rowspan="5">
-                    <img src="{{ face }}" height="200" width="300"/>
+                <td colspan="2">
+                    <b>Временный пропуск КБГУ №:</b> {{ id_propusk }}
+                    <br>
+                    <b>Дата выдачи:</b> {{ date_from }}
+                    <br>
+                    <b>Действителен до:</b> {{ date_to }}
+                    <br>
+                    <b>Выдал:</b> {{ personal }}
+                    <br><br>
+                    _______________________________________
+                    <br />Подпись сотрудника бюро пропусков
+                    <br>
+                    <b>Место выдачи:</b> {{ place }}
+                    <br>
+                    <b>Принимающий:</b> {{ receiving_man }}
+                    <br>
+                    <b>Цель визита:</b> {{ purpose_visite }}
+                    <br>
+                    <b>Время выхода: __________________</b>
                 </td>
-            </tr>
-            <tr>
-                <td><b>Дата выдачи:</b> {{ date_from }}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><b>Действителен до:</b> {{ date_to }}</td>
-            </tr>
-            <tr>
-                <td><b>Выдал:</b> {{ personal }}</td>
+                <td rowspan="2">
+                    <img src="{{document}}" height="650" width="500" />
+                </td>
             </tr>
             <tr>
                 <td>
-                    <p style="font-size: 12pt;">__________________________________</p>
-                    <p style="font-size: 10pt !important;">&nbsp;&nbsp;Подпись сотрудника бюро пропусков</p>
-                    <p style="font-size: 10pt !important;">&nbsp;&nbsp;Печать</p>
+                    <div style="border: 1px solid #000" width="350" height="300" align="center">
+                        <b>Используйте этот <br> QR-код для прохода <br> через турникет</b>
+                        <br>
+                        <img src="{{ qrcode }}" height="300" width="250">
+                    </div>
+
                 </td>
-                <td></td>
-                
-            </tr>
-            <tr height="200" width="300">
-                <td><b>Место выдачи:</b>{{ place }}</td>
-                <td rowspan="6">
-                    <img src="{{ document }}" height="200" width="300" />
+                <td>
+                    <img src="{{ face }}"
+                        height="300" width="250">
                 </td>
-            </tr>
-            <tr>
-                <td><b>Принимающий:</b></td>
-            </tr>
-            <tr>
-                <td>{{ receiving_man }}</td>
-            </tr>
-            <tr>
-                <td><b>Цель визита:</b></td>
-            </tr>
-            <tr> 
-                <td>{{ purpose_visite }}</td></tr>
-            <tr>
-                <td><b>Время выхода: __________________</b></td>
             </tr>
         </tbody>
     </table>
     <br>
-    <hr>
-    <br>
+    <div>
+            --------------------------------------------------------------------------------------- линия разрыва ----------------------------------------------------------------------------------------
+    </div>
     {% endfor %}
 </body>
 

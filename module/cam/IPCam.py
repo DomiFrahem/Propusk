@@ -27,32 +27,26 @@ class IPCam(Thread):
             if 'rtsp' in self.lnk_connect:
                 self.cap.open(self.lnk_connect)
 
-                if not self.cap.isOpened():
-                    raise ConnectionError
-
             while self.status:
 
                 if 'http' in self.lnk_connect:
                     self.cap.open(self.lnk_connect)
 
-                    if not self.cap.isOpened():
-                        raise ConnectionError
-
+                if not self.cap.isOpened():
+                    raise ConnectionError
+                
                 ret, frame = self.cap.read()
-                if not ret:
-                    continue
+                if not ret: continue
 
                 color_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                _, _, ch = color_frame.shape
-                
-                
+                h, w, ch = color_frame.shape
                 img = QImage(color_frame.data, w, h,
                              ch * w, QImage.Format_RGB888)
                 
                 
                 label_geometry = self.qLabel.geometry()
-                h, w = label_geometry.height(), label_geometry.width()
+                h, w = label_geometry.height()-20, label_geometry.width()-20
                 
                 self.__scaled_img = QPixmap.fromImage(
                     img.scaled(h, w, Qt.KeepAspectRatio))
@@ -83,5 +77,6 @@ class IPCam(Thread):
         qLabel.setPixmap(self.__scaled_img)
         self.__scaled_img.save(name_file, 'jpg')
         self.stop_cam()
-        cupture_face(name_file, F"face_{create_filename()}")
+        face_file_name = create_filename('face')
+        cupture_face(name_file, face_file_name)
         return name_file

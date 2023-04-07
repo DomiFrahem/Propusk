@@ -94,7 +94,7 @@ class USBCam:
     def image_saved(self, id, fileName):
         load_image(self._label, fileName)
         self.stop_cam()
-        cupture_face(fileName, F"face_{create_filename()}")
+        return fileName
 
 
 def load_image(qlabel: QLabel, path_file: str) -> None:
