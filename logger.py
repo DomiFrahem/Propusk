@@ -2,11 +2,11 @@ import logging
 # import logging.config
 import os
 from datetime import datetime
-
+import appdirs
 
 def create_logger():
     
-    path_dir_log = os.path.join(os.path.dirname(__file__), 'logs')
+    path_dir_log = os.path.join(appdirs.user_log_dir(), 'propusk')
 
     if not os.path.exists(path_dir_log):
         os.mkdir(path_dir_log)
