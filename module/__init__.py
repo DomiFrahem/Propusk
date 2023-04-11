@@ -2,6 +2,8 @@ from datetime import datetime
 import os
 import platform
 import subprocess
+from module.MyMessageBox import show_dialog
+from PySide6.QtWidgets import QMessageBox
 
 
 
@@ -14,13 +16,13 @@ def get_path_wkhtmltopdf() -> str:
             result = subprocess.Popen(['whereis wkhtmltopdf'], shell=True, stdout=subprocess.PIPE).stdout.read()
             return str(result).split(' ')[1]
         case 'Windows':
-            pass
+            path_window_programm = "C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+            if os.path.exists(path_window_programm):
+                return path_window_programm
+            else:
+                show_dialog(QMessageBox.Icon.Critical, 
+                            "Не найдено ПО",
+                            "Не установлена программа wkhtmltopdf")
         case _: ...
     
     
-def main():
-    print(get_path_wkhtmltopdf())
-
-
-if __name__ == "__main__":
-    main()
