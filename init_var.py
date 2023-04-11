@@ -21,7 +21,7 @@ os.environ.update({
 
 def load_variables():
     # Load variable from .env
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    dotenv_path = os.path.join(appdirs.user_config_dir(), 'propusk.env')
 
     if not os.path.exists(dotenv_path):
         DialogCustomVariables(dotenv_path).exec_()
